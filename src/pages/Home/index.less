@@ -1,0 +1,91 @@
+.home-page {
+  padding: 16px;
+  .type-name {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    section {
+      display: flex;
+      align-items: center;
+    }
+    .iconfont {
+      font-size: 16px !important;
+    }
+  }
+  .data-box {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
+    .card {
+      padding: 10px 24px;
+      width: 260px;
+      height: 120px;
+      border-radius: 6px;
+      background-color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .number-value {
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: rgba(24, 144, 255, 0.3);
+        text-align: center;
+        line-height: 60px;
+        .iconfont {
+          font-size: 24px;
+          color: #fff;
+        }
+      }
+    }
+    .warn-card {
+      height: 150px;
+    }
+  }
+
+  .warning-box {
+    padding: 8px 16px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    .icon-jinggao {
+      color: #faad14;
+      margin-right: 8px;
+    }
+    .content-box {
+      display: flex;
+      justify-content: space-between;
+      .box-left {
+        width: 400px;
+        height: 400px;
+        background-color: #fff;
+      }
+      .box-right {
+        width: calc(100% - 440px);
+        height: 400px;
+        background-color: #fff;
+        overflow: auto;
+      }
+    }
+  }
+
+  .project-box {
+    padding: 8px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    .icon-gongcheng {
+      color: #3ba272;
+      margin-right: 8px;
+    }
+    #map-container {
+      height: 500px;
+      width: 100%;
+    }
+  }
+}
