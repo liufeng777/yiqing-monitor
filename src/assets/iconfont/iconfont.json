@@ -6,6 +6,27 @@
   "description": "蚁情监控",
   "glyphs": [
     {
+      "icon_id": "18165398",
+      "name": "ANT-black,蚂蚁集团",
+      "font_class": "ANT-black",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "1304886",
+      "name": "收起菜单",
+      "font_class": "shouqicaidan",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "1304894",
+      "name": "展开菜单",
+      "font_class": "zhankaicaidan",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
       "icon_id": "24916814",
       "name": "表格2",
       "font_class": "biaoge2",

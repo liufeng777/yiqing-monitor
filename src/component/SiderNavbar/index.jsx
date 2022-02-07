@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Tooltip } from 'antd';
 import { withRouter } from 'react-router';
 
 // redux
@@ -55,21 +55,43 @@ const navbarArr = [{
 class SiderNavbar extends React.Component{
   constructor (props) {
     super(props);
+    this.state={
+      open: true
+    }
   }
 
   render () {
     return (
-      <section className="navbar-box">
-        <header className="navbar-header">蚁情监测</header>
+      <section className="navbar-box" style={{width: `${this.state.open ? '152px' : '50px'}`}}>
+        <header className="navbar-header">
+          <i className="iconfont icon-ANT-black" />
+          { this.state.open && 
+            <span>蚁情监测</span>
+          }
+        </header>
         <section className="navbar-body">
-          {
-            navbarArr.map((item) =>
+          {navbarArr.map((item) =>
               <NavLink key={item.path} to={item.path} className="navlink">
-                <i className={`iconfont ${item.icon}`} />
-                {item.name}
+                {
+                  this.state.open ? <>
+                    <i className={`iconfont ${item.icon}`} />
+                    {item.name}
+                  </> :
+                  <Tooltip title={item.name} placement="right">
+                    <i className={`iconfont ${item.icon}`} />
+                  </Tooltip>
+                }
               </NavLink>)
           }
         </section>
+        <i 
+          className={`iconfont operation-icon ${this.state.open ? 'icon-shouqicaidan' : 'icon-zhankaicaidan'}`}
+          onClick={() => {
+            this.setState((preState) => ({
+              open: !preState.open
+            }))
+          }}
+        />
 
         <Modal width={400} visible={this.props.tokenInvalid}
           closable={false}
