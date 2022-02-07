@@ -1,9 +1,12 @@
 import React from 'react';
-import { Tooltip, Button, Table } from 'antd';
+import { Tooltip, Button } from 'antd';
 import { SelectArea } from '../../component/SelectArea';
 import { overviewStatistic, projectMap, warningList } from '../../api';
-import { warningType, confirmRes } from '../../assets/js/constant';
-import { getDateTime } from '../Card/DateAndTime';
+import { warningType } from '../../assets/js/constant';
+import { Header } from '../../component/Header';
+import { EchartSearch } from './EchartSearch';
+import { WarnProjectRank } from './WarnProjectRank';
+import { LatestWarn } from './LatestWarn';
 import './index.less';
 
 import * as echarts from 'echarts/core';
@@ -41,7 +44,7 @@ export default class HomePage extends React.Component {
   }
 
   render() {
-    const dataArr = [{
+    const leftDataArr = [{
       icon: 'icon-gongcheng',
       count: this.state.data.project_count,
       title: '工程',
@@ -51,7 +54,9 @@ export default class HomePage extends React.Component {
       count: this.state.data.point_count,
       title: '布点',
       path: '/point'
-    }, {
+    }]
+
+    const rightDataArr = [{
       icon: 'icon-tance',
       count: this.state.data.detect_count,
       title: '探测',
@@ -65,169 +70,214 @@ export default class HomePage extends React.Component {
 
     return (
       <section className="home-page">
-        {/* 搜索 */}
-        <section className="search-box">
-          <section>
-            <span className="label l-small">区域：</span>
-            <SelectArea
-              selectAll
-              width={392}
-              area_code={this.state.area_code}
-              visible
-              onChange={({code, point}) => {
-                this.setState({ area_code: code, area_point: point})
-              }}
-            />
-          </section>
-          <section>
-            <Tooltip title="搜素">
-              <Button shape="circle" type="primary" style={{margin: '0px 10px'}} onClick={() => {
-                this.getData()
-                this.getProjectsInMap()
-                this.getWarning()
-                this.getMapCenterAndZoom();
-              }}
-              >
-                <i className="iconfont icon-sousuo" />
-              </Button>
-            </Tooltip>
-            <Tooltip title="重置">
-              <Button shape="circle" type="primary" onClick={() => {
-                this.setState(() => ({
-                  area_code: '',
-                  area_point: '',
-                  centerPoint: {lng: 108.55, lat: 34.32},
-                  zoom: 6,
-                  data: {},
-                  projects: [],
-                  tableData: [],
-                  activeProject: null
-                }), () => {
+        <section className="home-top">
+          {/* 搜索 */}
+          <section className="search-box">
+            <section>
+              {/* <span className="label l-small">区域：</span> */}
+              <SelectArea
+                selectAll
+                width={330}
+                area_code={this.state.area_code}
+                visible
+                onChange={({code, point}) => {
+                  this.setState({ area_code: code, area_point: point})
+                }}
+              />
+            </section>
+            <section>
+              <Tooltip title="搜素">
+                <Button shape="circle" type="primary" style={{margin: '0px 10px'}} onClick={() => {
                   this.getData()
                   this.getProjectsInMap()
                   this.getWarning()
+                  this.getMapCenterAndZoom();
+                }}
+                >
+                  <i className="iconfont icon-sousuo" />
+                </Button>
+              </Tooltip>
+              <Tooltip title="重置">
+                <Button shape="circle" type="primary" onClick={() => {
+                  this.setState(() => ({
+                    area_code: '',
+                    area_point: '',
+                    centerPoint: {lng: 108.55, lat: 34.32},
+                    zoom: 6,
+                    data: {},
+                    projects: [],
+                    tableData: [],
+                    activeProject: null
+                  }), () => {
+                    this.getData()
+                    this.getProjectsInMap()
+                    this.getWarning()
+                  })
+                }}
+                >
+                  <i className="iconfont icon-zhongzhi" />
+                </Button>
+              </Tooltip>
+            </section>
+          </section>
+          <section className="home-title">蚁情监测平台</section>
+          {/* 登录信息 */}
+          <section className="login-info">
+            <Header />
+          </section>
+        </section>
+
+        <section className="home-body">
+          {/* 工程、布点 */}
+          <section className="body-left">
+            <ul className="data-box">
+              {
+                leftDataArr.map((item, index) => {
+                  return (
+                    <li key={index}>
+                      <span className="type-name">{item.title}：</span>
+                      <span className="number-value" onClick={() => {
+                        this.props.history.push(item.path);
+                      }}
+                      >{item.count}</span>
+                    </li>
+                  )
                 })
-              }}
+              }
+            </ul>
+            {/* 按年按月 */}
+            <EchartSearch
+              onChangeTime={(val) => {}}
+              onChangeIndex={(val) => {}}
+            />
+            {/* echats */}
+            <section className="echart-box">
+              <p>
+                <i className="iconfont icon-gongcheng" />
+                工程增量
+              </p>
+              <section className="echart-data" id="project-echart" />
+            </section>
+            <section className="echart-box">
+              <p>
+                <i className="iconfont icon-f-location" />
+                布点增量
+              </p>
+              <section className="echart-data" id="point-echart" />
+            </section>
+          </section>
+          
+          {/* 地图 */}
+          <section className="body-center">
+            <section className="project-box">
+              <p className="type-name">
+                <i className="iconfont icon-gongcheng" />
+                工程分布
+              </p>
+              <section id="map-container">
+              <Map
+                style={{height: '100%'}}
+                center={this.state.centerPoint || {lng: 108.55, lat: 34.32}}
+                zoom={this.state.zoom}
+                enableScrollWheelZoom
               >
-                <i className="iconfont icon-zhongzhi" />
-              </Button>
-            </Tooltip>
+                {
+                  this.state.projects.map((item) => {
+                    return <CustomOverlay
+                      position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
+                      key={item.project_id}
+                          >
+                      <span
+                        style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center', lineHeight: 40}}
+                        onClick={() => {
+                          this.setState({activeProject: item})
+                        }}
+                      >
+                        {this.getMarker(item)}
+                      </span>
+                    </CustomOverlay>
+                  })
+                }
+                <NavigationControl />
+                <ZoomControl />
+                { this.state.activeProject &&
+                  <InfoWindow
+                    position={{lng: this.state.activeProject.longitude / 1000000, lat: this.state.activeProject.latitude / 1000000}}
+                    title={this.state.activeProject.name}
+                    height={90}
+                  >
+                    <section>
+                      <p>
+                        <span>未处理报警(蚁情)数量：</span>
+                        <span style={{fontSize: 24, fontWeight: 'bold', color: '#FF4D4F'}}>{this.state.activeProject.termite_wait_count}</span>
+                      </p>
+                      <p>
+                        <span>报警(蚁情)总数：</span>
+                        <span style={{fontSize: 24, fontWeight: 'bold', color: '#FAAD14'}}>{this.state.activeProject.termite_count}</span>
+                      </p>
+                    </section>
+                  </InfoWindow>
+                }
+              </Map>
+              </section>
+            </section>
+          </section>
+
+          {/* 报警、检查 */}
+          <section className="body-right">
+            <ul className="data-box">
+              {
+                rightDataArr.map((item, index) => {
+                  return (
+                    <li key={index}>
+                      <section>
+                        <span className="type-name">{item.title}：</span>
+                        <span className="number-value" onClick={() => {
+                          this.props.history.push(item.path);
+                        }}
+                        >{item.count}</span>
+                      </section>
+                    </li>
+                  )
+                })
+              }
+            </ul>
+            {/* 按年按月 */}
+            <EchartSearch
+              onChangeTime={(val) => {}}
+              onChangeIndex={(val) => {}}
+            />
+
+            {/* echats */}
+            <section className="echart-box">
+              <p>
+                <i className="iconfont icon-jinggao" />
+                蚁情报警（已处理）
+              </p>
+              <section className="echart-data" id="warn-echart" />
+            </section>
+            <section className="echart-box">
+              <p>
+                <i className="iconfont icon-jianchajieguo" />
+                检查数
+              </p>
+              <section className="echart-data" id="detect-echart" />
+            </section>
           </section>
         </section>
         
-        {/* 数据 */}
-        <ul className="data-box">
-          {
-            dataArr.map((item) => {
-              return (
-                <li className="card" key={item.icon}>
-                  <section>
-                    <p className="type-name">{item.title}</p>
-                    <span className="number-value" onClick={() => {
-                      this.props.history.push(item.path);
-                    }}
-                    >{item.count}</span>
-                  </section>
-                  <section className="icon">
-                    <i className={`iconfont ${item.icon}`} />
-                  </section>
-                </li>
-              )
-            })
-          }
-        </ul>
-        
         {/* 报警 */}
-        <section className="warning-box">
-          <p className="type-name">
-            <i className={"iconfont icon-jinggao"} />
-            报警数据
-          </p>
-
-          <section className="content-box">
-            {/* echarts */}
-            <section className="box-left" id="warn-echart" />
-
-            {/* table */}
-            <section className="box-right">
-              <Table
-                style={{width: 890}}
-                dataSource={this.state.tableData}
-                rowKey={r => r.warn_id}
-                pagination={false}
-                size="small"
-              >
-                <Table.Column title="布点" dataIndex="point_name" key="point_name" />
-                <Table.Column title="报警类型" dataIndex="warn_type" key="warn_type"
-                  render={(val, _) => (<span>{warningType[val]}</span>)}
-                />
-                <Table.Column title="探测时间" dataIndex="detect_timestamp" key="detect_timestamp"
-                  render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
-                />
-                <Table.Column title="确认时间" dataIndex="confirm_timestamp" key="confirm_timestamp"
-                  render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
-                />
-                <Table.Column title="确认用户" dataIndex="confirm_user_name" key="confirm_user_name" />
-                <Table.Column title="报警确认结果" dataIndex="confirm_res" key="confirm_res"
-                  render={(val, _) => (<span>{confirmRes[val]}</span>)}
-                />
-              </Table>
-            </section>
-            </section>
-        </section>
-        
-        
-        {/* 地图 */}
-        <section className="project-box">
-          <p className="type-name">
-            <i className="iconfont icon-gongcheng" />
-            工程分布
-          </p>
-          <section id="map-container">
-          <Map
-            style={{height: '100%'}}
-            center={this.state.centerPoint || {lng: 108.55, lat: 34.32}}
-            zoom={this.state.zoom}
-            enableScrollWheelZoom
-          >
-            {
-              this.state.projects.map((item) => {
-                return <CustomOverlay
-                  position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
-                  key={item.project_id}
-                       >
-                  <span
-                    style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center', lineHeight: 40}}
-                    onClick={() => {
-                      this.setState({activeProject: item})
-                    }}
-                  >
-                    {this.getMarker(item)}
-                  </span>
-                </CustomOverlay>
-              })
-            }
-            <NavigationControl />
-            <ZoomControl />
-            { this.state.activeProject &&
-              <InfoWindow
-                position={{lng: this.state.activeProject.longitude / 1000000, lat: this.state.activeProject.latitude / 1000000}}
-                title={this.state.activeProject.name}
-                height={90}
-              >
-                <section>
-                  <p>
-                    <span>未处理报警(蚁情)数量：</span>
-                    <span style={{fontSize: 24, fontWeight: 'bold', color: '#FF4D4F'}}>{this.state.activeProject.termite_wait_count}</span>
-                  </p>
-                  <p>
-                    <span>报警(蚁情)总数：</span>
-                    <span style={{fontSize: 24, fontWeight: 'bold', color: '#FAAD14'}}>{this.state.activeProject.termite_count}</span>
-                  </p>
-                </section>
-              </InfoWindow>
-            }
-          </Map>
+        <section className="home-footer">
+          <section className="table-box">
+            <WarnProjectRank />
+            <LatestWarn />
+          </section>
+          <section className="echart-box" style={{marginTop: 0}}>
+            <p>
+              <i className="iconfont icon-jinggao" />
+              报警类型
+            </p>
+            <section className="echart-data" id="warn-type-echart" />
           </section>
         </section>
       </section>
@@ -249,7 +299,7 @@ export default class HomePage extends React.Component {
           name: warningType[key] + '(' + res.warns_count[key] + ')'
         }
       })
-      const chartDom = document.getElementById('warn-echart');
+      const chartDom = document.getElementById('warn-type-echart');
       const warnChart = echarts.init(chartDom);
       const option = {
         legend: {
@@ -260,11 +310,11 @@ export default class HomePage extends React.Component {
           {
             name: '',
             type: 'pie',
-            radius: [20, 110],
+            radius: [10, 60],
             center: ['50%', '50%'],
             roseType: 'area',
             itemStyle: {
-              borderRadius: 8
+              borderRadius: 4
             },
             data
           }

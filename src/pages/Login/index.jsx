@@ -25,7 +25,7 @@ class LoginPage extends React.Component {
     return (
       <section className="login-page">
         <section className="login-box">
-          <header className="title">蚁情监控系统</header>
+          <header className="title">蚁情监测系统</header>
           <Form onFinish={async (values) => {
             const res = await login({
               mobile: this.state.mobile,

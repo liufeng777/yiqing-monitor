@@ -60,7 +60,7 @@ class SiderNavbar extends React.Component{
   render () {
     return (
       <section className="navbar-box">
-        <header className="navbar-header">蚁情监控</header>
+        <header className="navbar-header">蚁情监测</header>
         <section className="navbar-body">
           {
             navbarArr.map((item) =>
@@ -115,7 +115,7 @@ export default connect(mapStateToProps, mapDispathToProps)(withRouter(SiderNavba
 //   // const history = useHistory();
 //   return (
 //     <section className="navbar-box">
-//       <header className="navbar-header">蚁情监控</header>
+//       <header className="navbar-header">蚁情监测</header>
 //       <section className="navbar-body">
 //         {
 //           navbarArr.map((item) =>

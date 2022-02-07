@@ -5,7 +5,6 @@ import { storeInstance } from './store/index';
 
 // component
 import SiderNavbar from './component/SiderNavbar';
-import { Header } from './component/Header';
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
 import ProjectPage from './pages/Project';
@@ -54,12 +53,6 @@ export default class App extends React.Component {
                   />
                 </aside>
                 <section className="app-content">
-                  <header className="app-header">
-                    <Header onSubmit={(isLogin) => {
-                      this.setState({isLogin})
-                    }}
-                    />
-                  </header>
                   <section className="app-body">
                     <section className="app-page">
                       <Switch>
