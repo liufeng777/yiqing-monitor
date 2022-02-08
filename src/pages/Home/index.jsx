@@ -123,7 +123,7 @@ export default class HomePage extends React.Component {
           <section className="home-title">蚁情监测平台</section>
           {/* 登录信息 */}
           <section className="login-info">
-            <Header />
+            <Header onSubmit={(val) => this.props.changeLoginInfo(val)} />
           </section>
         </section>
 

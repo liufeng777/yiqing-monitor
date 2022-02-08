@@ -35,7 +35,7 @@ export const Header = (props) => {
               const res = await logout({});
               if (res) {
                 message.success('已成功退出登录');
-                // props.onSubmit(false);
+                props.onSubmit(false);
                 history.push('/login');
                 sessionStorage.clear();
               }
@@ -74,7 +74,7 @@ export const Header = (props) => {
           });
           if (res) {
             message.success('密码修改成功，请重新登录');
-            // props.onSubmit(false);
+            props.onSubmit(false);
             history.push('/login');
             sessionStorage.clear();
           }

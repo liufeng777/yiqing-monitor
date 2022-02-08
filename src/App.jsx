@@ -56,7 +56,10 @@ export default class App extends React.Component {
                   <section className="app-body">
                     <section className="app-page">
                       <Switch>
-                        <Route path="/home" component={HomePage} />
+                        <Route path="/home" render={props => <HomePage {...props} changeLoginInfo={(isLogin) => {
+                          this.setState({isLogin})
+                        }}/>}
+                       />
                         <Route path="/project" exact component={ProjectPage} />
                         <Route path="/project/user/:proId" exact component={ProjectUserPage} />
                         <Route path="/point" component={PointPage} />
