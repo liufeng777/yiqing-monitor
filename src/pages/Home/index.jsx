@@ -7,15 +7,13 @@ import { Header } from '../../component/Header';
 import { EchartSearch } from './EchartSearch';
 import { WarnProjectRank } from './WarnProjectRank';
 import { LatestWarn } from './LatestWarn';
+import MapBox from './MapBox';
 import './index.less';
 
 import * as echarts from 'echarts/core';
 import { ToolboxComponent, LegendComponent } from 'echarts/components';
 import { PieChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
-
-// 地图
-import { Map, NavigationControl, ZoomControl, InfoWindow, CustomOverlay } from 'react-bmapgl';
 
 echarts.use(
   [ToolboxComponent, LegendComponent, PieChart, CanvasRenderer]
@@ -74,7 +72,6 @@ export default class HomePage extends React.Component {
           {/* 搜索 */}
           <section className="search-box">
             <section>
-              {/* <span className="label l-small">区域：</span> */}
               <SelectArea
                 selectAll
                 width={330}
@@ -169,58 +166,17 @@ export default class HomePage extends React.Component {
           
           {/* 地图 */}
           <section className="body-center">
-            <section className="project-box">
-              <p className="type-name">
-                <i className="iconfont icon-gongcheng" />
-                工程分布
-              </p>
-              <section id="map-container">
-              <Map
-                style={{height: '100%'}}
-                center={this.state.centerPoint || {lng: 108.55, lat: 34.32}}
-                zoom={this.state.zoom}
-                enableScrollWheelZoom
-              >
-                {
-                  this.state.projects.map((item) => {
-                    return <CustomOverlay
-                      position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
-                      key={item.project_id}
-                          >
-                      <span
-                        style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center', lineHeight: 40}}
-                        onClick={() => {
-                          this.setState({activeProject: item})
-                        }}
-                      >
-                        {this.getMarker(item)}
-                      </span>
-                    </CustomOverlay>
-                  })
-                }
-                <NavigationControl />
-                <ZoomControl />
-                { this.state.activeProject &&
-                  <InfoWindow
-                    position={{lng: this.state.activeProject.longitude / 1000000, lat: this.state.activeProject.latitude / 1000000}}
-                    title={this.state.activeProject.name}
-                    height={90}
-                  >
-                    <section>
-                      <p>
-                        <span>未处理报警(蚁情)数量：</span>
-                        <span style={{fontSize: 24, fontWeight: 'bold', color: '#FF4D4F'}}>{this.state.activeProject.termite_wait_count}</span>
-                      </p>
-                      <p>
-                        <span>报警(蚁情)总数：</span>
-                        <span style={{fontSize: 24, fontWeight: 'bold', color: '#FAAD14'}}>{this.state.activeProject.termite_count}</span>
-                      </p>
-                    </section>
-                  </InfoWindow>
-                }
-              </Map>
-              </section>
-            </section>
+            <MapBox
+              projects={this.state.projects}
+              zoom={this.state.zoom}
+              centerPoint={this.state.centerPoint}
+              activeProject={this.state.activeProject}
+              changeActiveProject={(item) => {
+                this.setState({
+                  activeProject: item
+                })
+              }}
+            />
           </section>
 
           {/* 报警、检查 */}
@@ -347,20 +303,6 @@ export default class HomePage extends React.Component {
     if (res) {
       this.setState({ tableData: res.records})
     }
-  }
-
-  // 获取marker颜色
-  getMarker = (project) => {
-    let color = '';
-    if (project.termite_wait_count > 0) {
-      color = '#FF4D4F'
-    } else if (project.termite_count > 0) {
-      color = '#FAAD14'
-    } else {
-      color = '#52C41A'
-    }
-
-    return <i className="iconfont icon-f-location" style={{color, fontSize: 30 }} />
   }
 
   // 获取地图层级
