@@ -7,7 +7,7 @@ import { Header } from '../../component/Header';
 import { EchartSearch } from './EchartSearch';
 import { WarnProjectRank } from './WarnProjectRank';
 import { LatestWarn } from './LatestWarn';
-import MapBox from './MapBox';
+import ProjectMap from './ProjectMap';
 import './index.less';
 
 import * as echarts from 'echarts/core';
@@ -166,7 +166,7 @@ export default class HomePage extends React.Component {
           
           {/* 地图 */}
           <section className="body-center">
-            <MapBox
+            <ProjectMap
               projects={this.state.projects}
               zoom={this.state.zoom}
               centerPoint={this.state.centerPoint}

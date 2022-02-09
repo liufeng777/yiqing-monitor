@@ -6,6 +6,13 @@
   "description": "蚁情监控",
   "glyphs": [
     {
+      "icon_id": "1166034",
+      "name": "定位",
+      "font_class": "iconfontzhizuobiaozhun023117",
+      "unicode": "e677",
+      "unicode_decimal": 58999
+    },
+    {
       "icon_id": "18165398",
       "name": "ANT-black,蚂蚁集团",
       "font_class": "ANT-black",

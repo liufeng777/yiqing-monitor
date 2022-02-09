@@ -10,6 +10,7 @@ import HomePage from './pages/Home';
 import ProjectPage from './pages/Project';
 import ProjectUserPage from './pages/ProjectUser';
 import PointPage from './pages/Point';
+import PointMap from './pages/Point/PointMap';
 import DevicePage from './pages/Device';
 import CardPage from './pages/Card';
 import AdminPage from './pages/Admin';
@@ -62,6 +63,7 @@ export default class App extends React.Component {
                        />
                         <Route path="/project" exact component={ProjectPage} />
                         <Route path="/project/user/:proId" exact component={ProjectUserPage} />
+                        <Route path="/point/map/:proId" component={PointMap} />
                         <Route path="/point" component={PointPage} />
                         <Route path="/device" component={DevicePage} />
                         <Route path="/card" component={CardPage} />

@@ -1,0 +1,26 @@
+.point-map-box {
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  .header {
+    height: 40px;
+    line-height: 40px;
+  }
+  .point-map-body {
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    #point-map-container {
+      width: 100%;
+      flex: 1;
+    }
+    .point-item-desc {
+      margin-top: 10px;
+      background: #fff;
+      padding: 8px;
+      .ant-descriptions-header {
+        margin-bottom: 4px;
+      }
+    }
+  }
+}

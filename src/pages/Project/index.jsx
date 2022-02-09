@@ -157,6 +157,12 @@ export default class ProjectPage extends React.Component {
                     })} 
                     />
                   </Tooltip>
+                  <Tooltip title="查看布点分布">
+                    <i className="iconfont icon-iconfontzhizuobiaozhun023117" onClick={throttle(1000, () => this.props.history.push({
+                      pathname: `/point/map/${record.project_id}`,
+                      state: { from : 'project' }
+                    }))} />
+                  </Tooltip>
                   <Tooltip title="绑定工程人员">
                     <i className="iconfont icon-renyuan" onClick={throttle(1000, () => this.props.history.push(`/project/user/${record.project_id}`))} />
                   </Tooltip>
