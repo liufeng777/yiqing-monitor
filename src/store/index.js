@@ -2,7 +2,8 @@ import { createStore } from 'redux';
 import { types } from './types';
 
 const initialState = {
-  tokenInvalid: false
+  tokenInvalid: false,
+  areaCode: +sessionStorage.getItem('areaCode') || 0
 };
 
 const reducer = (state = initialState, action) => {
@@ -12,6 +13,11 @@ const reducer = (state = initialState, action) => {
         ...state,
         tokenInvalid: action.payload
       };
+    case types.SET_AREA_CODE:
+      return {
+        ...state,
+        areaCode: action.payload
+      }
     default:
       return state;
   }

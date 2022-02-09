@@ -8,12 +8,18 @@ import { SelectArea } from '../../component/SelectArea';
 import { throttle } from 'throttle-debounce';
 import './index.less';
 
+
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 // api
 import { detectList, detectBatchDelete, detectAdd, detectChange } from '../../api';
 
 const {Option} = Select;
 
-export default class DetectPage extends React.Component {
+class DetectPage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -29,7 +35,7 @@ export default class DetectPage extends React.Component {
       // 搜索
       proj_keyword: '',
       point_keyword: '',
-      area_code: +sessionStorage.getItem('areaCode') || '',
+      area_code: this.props.areaCode,
       warn_type: '',
       detect_type: '',
       begin_timestamp: '',
@@ -162,7 +168,10 @@ export default class DetectPage extends React.Component {
             </li>
             <li>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
+                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                  this.props.setAreaCode(this.state.area_code)
+                  this.getAll()
+                }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
@@ -322,3 +331,19 @@ export default class DetectPage extends React.Component {
     }
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    areaCode: state.areaCode,
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(DetectPage);
+
+

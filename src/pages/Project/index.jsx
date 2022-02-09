@@ -7,10 +7,15 @@ import { SelectArea } from '../../component/SelectArea';
 import { throttle } from 'throttle-debounce';
 import './index.less';
 
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 // api
 import { projectList, projectDelete, projectAdd, projectChange, projectExport, projectImport } from '../../api';
 
-export default class ProjectPage extends React.Component {
+class ProjectPage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -24,7 +29,7 @@ export default class ProjectPage extends React.Component {
       // 搜索条件
       proj_keyword: '',
       user_keyword: '',
-      area_code: +sessionStorage.getItem('areaCode') || 0,
+      area_code: this.props.areaCode,
     }
   };
 
@@ -106,7 +111,10 @@ export default class ProjectPage extends React.Component {
             </li>
             <li>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
+                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                  this.props.setAreaCode(this.state.area_code)
+                  this.getAll()
+                }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
@@ -318,3 +326,17 @@ export default class ProjectPage extends React.Component {
     URL.revokeObjectURL(a.href)
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    areaCode: state.areaCode,
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(ProjectPage);

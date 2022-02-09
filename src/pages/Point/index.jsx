@@ -8,12 +8,17 @@ import { throttle } from 'throttle-debounce';
 import { getDateTime } from '../Card/DateAndTime';
 import './index.less';
 
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 // api
 import { pointList, pointBatchDelete, pointAdd, pointChange, pointExport, pointImport } from '../../api';
 
 const { Option } = Select;
 
-export default class PointPage extends React.Component {
+class PointPage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -32,7 +37,7 @@ export default class PointPage extends React.Component {
       state: '',
       device_code: '',
       device_type: '',
-      area_code: +sessionStorage.getItem('areaCode') || '',
+      area_code: this.props.areaCode,
     }
   };
 
@@ -170,7 +175,10 @@ export default class PointPage extends React.Component {
             </li>
             <li>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
+                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                  this.props.setAreaCode(this.state.area_code)
+                  this.getAll()
+                }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
@@ -429,3 +437,18 @@ export default class PointPage extends React.Component {
     URL.revokeObjectURL(a.href)
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    areaCode: state.areaCode,
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(PointPage);
+

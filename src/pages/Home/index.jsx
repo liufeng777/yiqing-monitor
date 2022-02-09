@@ -15,15 +15,20 @@ import { ToolboxComponent, LegendComponent } from 'echarts/components';
 import { PieChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 echarts.use(
   [ToolboxComponent, LegendComponent, PieChart, CanvasRenderer]
 );
 
-export default class HomePage extends React.Component {
+class HomePage extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      area_code: +sessionStorage.getItem('areaCode') || 0,
+      area_code: this.props.areaCode,
       area_point: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
       centerPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
       zoom: 6,
@@ -89,6 +94,7 @@ export default class HomePage extends React.Component {
                   this.getProjectsInMap()
                   this.getWarning()
                   this.getMapCenterAndZoom();
+                  this.props.setAreaCode(this.state.area_code)
                 }}
                 >
                   <i className="iconfont icon-sousuo" />
@@ -331,3 +337,17 @@ export default class HomePage extends React.Component {
     }
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    areaCode: state.areaCode,
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(HomePage);
