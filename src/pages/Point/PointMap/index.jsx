@@ -54,8 +54,7 @@ export default class PointMap extends React.Component {
               enableScrollWheelZoom
             >
             {/* 布点 */}
-            {
-              this.state.points.map((item) => {
+              {this.state.points.map((item) => {
                 return <CustomOverlay
                     position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
                     key={item.point_id}
@@ -74,8 +73,7 @@ export default class PointMap extends React.Component {
                     }} />
                     </span>
                 </CustomOverlay>
-                })
-            }
+              })}
             <NavigationControl />
             <ZoomControl />
             </Map>
