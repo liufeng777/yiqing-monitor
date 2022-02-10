@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, Button, Tag } from 'antd';
 import { SelectArea } from '../../component/SelectArea';
-import { overviewStatistic, projectMap, warningList } from '../../api';
+import { overviewStatistic, projectMap, warningList, overviewTopProjWarn } from '../../api';
 import { warningType, barOption, lineOption } from '../../assets/js/constant';
 import { Header } from '../../component/Header';
 import { EchartSearch } from './EchartSearch';
@@ -42,21 +42,23 @@ class HomePage extends React.Component {
       zoom: 6,
       data: {},
       projects: [],
-      tableData: [],
       activeProject: null,
       // 按年按月参数
       projAndPointTimeType: 1,
       projAndPointIndex: 0,
       warnAndInspectTimeType: 1,
-      warnAndInspectIndex: 0
+      warnAndInspectIndex: 0,
+      // 表格数据
+      projectTable: [],
+      warnTable: []
     }
   }
 
   componentDidMount() {
     this.getStatistic()
     this.getProjectsInMap()
-    this.getWarning()
     this.getMapCenterAndZoom()
+    this.getTopProjWarn()
   }
 
   render() {
@@ -115,7 +117,7 @@ class HomePage extends React.Component {
                 <Button shape="circle" type="primary" style={{margin: '0px 10px'}} onClick={() => {
                   this.getStatistic()
                   this.getProjectsInMap()
-                  this.getWarning()
+                  this.getTopProjWarn();
                   this.getMapCenterAndZoom();
                   this.props.setAreaCode(this.state.area_code)
                 }}
@@ -132,12 +134,13 @@ class HomePage extends React.Component {
                     zoom: 6,
                     data: {},
                     projects: [],
-                    tableData: [],
-                    activeProject: null
+                    activeProject: null,
+                    projectTable: [],
+                    warnTable: []
                   }), () => {
                     this.getStatistic()
                     this.getProjectsInMap()
-                    this.getWarning()
+                    this.getTopProjWarn()
                   })
                 }}
                 >
@@ -193,14 +196,14 @@ class HomePage extends React.Component {
             <section className="echart-box">
               <p>
                 <i className="iconfont icon-gongcheng" />
-                工程增量
+                <span>工程增量</span>
               </p>
               <section className="echart-data" id="project-echart" />
             </section>
             <section className="echart-box">
               <p>
                 <i className="iconfont icon-f-location" />
-                布点增量
+                <span>布点增量</span>
               </p>
               <section className="echart-data" id="point-echart" />
             </section>
@@ -263,14 +266,14 @@ class HomePage extends React.Component {
             <section className="echart-box">
               <p>
                 <i className="iconfont icon-jinggao" />
-                蚁情报警（已处理）
+                <span>蚁情报警（已处理）</span>
               </p>
               <section className="echart-data" id="warn-echart" />
             </section>
             <section className="echart-box">
               <p>
                 <i className="iconfont icon-jianchajieguo" />
-                检查数
+                <span>检查数</span>
               </p>
               <section className="echart-data" id="inspect-echart" />
             </section>
@@ -280,8 +283,8 @@ class HomePage extends React.Component {
         {/* 报警 */}
         <section className="home-footer">
           <section className="table-box">
-            <WarnProjectRank />
-            <LatestWarn />
+            <WarnProjectRank data={this.state.projectTable} />
+            <LatestWarn data={this.state.warnTable} />
           </section>
           <section className="echart-box" style={{marginTop: 0}}>
             <p>
@@ -351,11 +354,18 @@ class HomePage extends React.Component {
         {
           name: '',
           type: 'pie',
-          radius: [10, 60],
+          radius: [10, 70],
           center: ['50%', '50%'],
           roseType: 'area',
           itemStyle: {
-            borderRadius: 4
+            borderRadius: 6
+          },
+          label: {
+            textBorderWidth: 0
+          },
+          labelLine: {
+            length: 4,
+            length2: 4
           },
           data
         }
@@ -404,18 +414,6 @@ class HomePage extends React.Component {
     }
   }
 
-  // 获取报警
-  getWarning = async () => {
-    const res = await warningList({
-      get_count: 10,
-      start_index: 0,
-      area_code: this.state.area_code
-    });
-    if (res) {
-      this.setState({ tableData: res.records})
-    }
-  }
-
   // 获取地图层级
   getMapCenterAndZoom = () => {
     this.setState((preState) => ({
@@ -438,6 +436,19 @@ class HomePage extends React.Component {
     } else {
       this.setState({
         zoom: 14
+      })
+    }
+  }
+
+  // 获取蚁情最多的工程和最新蚁情报警
+  getTopProjWarn = async () => {
+    const res = await overviewTopProjWarn({
+      area_code: this.state.area_code
+    });
+    if (res) {
+      this.setState({
+        projectTable: res.projects,
+        warnTable: res.warns
       })
     }
   }

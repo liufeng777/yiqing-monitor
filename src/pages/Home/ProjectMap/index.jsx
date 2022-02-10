@@ -18,8 +18,10 @@ class ProjectMap extends React.Component {
   render () {
       return (
         <section className="project-map-box">
-          <i className="iconfont icon-gongcheng" />
-          工程分布
+          <p className='project-title'>
+            <i className="iconfont icon-gongcheng" />
+            工程分布
+          </p>
           <section id="project-map-container">
           <Map
             style={{height: '100%'}}
