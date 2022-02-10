@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Descriptions } from 'antd';
-import { pointList, projectGet } from '../../../api';
+import { pointListInMap, projectGet, pointGet } from '../../../api';
 import { getDateTime } from '../../Card/DateAndTime';
 import { inspectResult, measureType, warnType } from '../../../assets/js/constant';
 import './index.less';
@@ -34,12 +34,12 @@ export default class PointMap extends React.Component {
         <header className="header">
           <span className="title">
             {
-              this.props.location.state.from === 'home' && <>
+              this.props.location.state?.from === 'home' && <>
                 <Link to="/home">工程分布</Link> / 布点分布({this.state.points.length})
               </>
             }
             {
-              this.props.location.state.from === 'project' && <>
+              this.props.location.state?.from === 'project' && <>
                 <Link to="/project">工程列表 ({this.state.project?.name})</Link> / 布点分布({this.state.points.length})
               </>
             }
@@ -62,9 +62,7 @@ export default class PointMap extends React.Component {
                     <span
                       style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center'}}
                       onClick={() => {
-                        this.setState({
-                          activePoint: item
-                        })
+                        this.getPointInfo(item.point_id)
                       }}
                     >
                     <i className="iconfont icon-f-location" style={{
@@ -110,10 +108,8 @@ export default class PointMap extends React.Component {
 
   // 根据工程获取布点
   getPointByProject = async () => {
-    const res = await pointList({
-      get_count: 100,
-      start_index: 0,
-      proj_keyword: this.props.match.params.proId,
+    const res = await pointListInMap({
+      project_id: this.props.match.params.proId,
     });
     if (res) {
       this.setState({
@@ -130,6 +126,18 @@ export default class PointMap extends React.Component {
     if (res) {
       this.setState({
         project: res.record
+      })
+    }
+  }
+
+  // 获取布点的最新信息
+  getPointInfo = async (id) => {
+    const res = await pointGet(id, {
+      id
+    });
+    if (res) {
+      this.setState({
+        activePoint: res.record
       })
     }
   }

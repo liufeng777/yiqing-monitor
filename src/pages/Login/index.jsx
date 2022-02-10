@@ -35,6 +35,7 @@ class LoginPage extends React.Component {
             if (res) {
               sessionStorage.setItem('isLogin', true);
               sessionStorage.setItem('areaCode', res.record?.area_code);
+              this.props.setAreaCode(res.record?.area_code)
               if (res.record?.area_lng) {
                 sessionStorage.setItem('areaPoint', JSON.stringify({
                   lng: +res.record?.area_lng, lat: +res.record?.area_lat

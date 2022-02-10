@@ -1,11 +1,11 @@
 import React from 'react';
 import { withRouter } from  'react-router-dom'
-import { Button, Descriptions } from 'antd';
-import { pointList } from '../../../api';
+import { Button } from 'antd';
+import { pointListInMap } from '../../../api';
 import './index.less';
 
 // 地图
-import { Map, NavigationControl, ZoomControl, InfoWindow, CustomOverlay } from 'react-bmapgl';
+import { Map, NavigationControl, ZoomControl, CustomOverlay } from 'react-bmapgl';
 
 class ProjectMap extends React.Component {
   constructor(props) {
@@ -89,10 +89,8 @@ class ProjectMap extends React.Component {
 
   // 根据工程获取布点
   getPointByProject = async (item) => {
-    const res = await pointList({
-      get_count: 100,
-      start_index: 0,
-      proj_keyword: item.project_id,
+    const res = await pointListInMap({
+      project_id: item.project_id
     });
     if (res) {
       this.setState({

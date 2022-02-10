@@ -12,7 +12,10 @@ export const getCurrentAdmin = () => axios('sessions/admin', {}, 'GET')
 /**
  * overview(首页统计信息)
  */
-export const overviewStatistic = data => axios('overview/statistic', data)
+export const overviewStatistic = data => axios('overview/statistic', data);
+export const overviewChartProjAndPoint = data => axios('overview/chart_cfg', data);
+export const overviewChartWarnAndInspect = data => axios('overview/chart_supv', data);
+export const overviewTopProjWarn = data => axios('overview/top_proj_warn', data);
 
 /**
  * admin(管理员)
@@ -95,7 +98,8 @@ export const pointGet = (id, data) => axios(`point/${id}`, data, 'GET')
 export const pointChange = (id, data) => axios(`point/${id}`, data, 'PUT')
 export const pointExport = (data) => axios('point/export', data)
 export const pointImport = (data) => axios('point/import', data, 'POST', 'multipart/form-data')
-export const pointListSimple = (data) => axios('point/list_simp', data)
+export const pointListSimple = (data) => axios('point/list_simp', data);
+export const pointListInMap = (data) => axios('point/list_in_map', data);
 
 /**
  * project(工程)

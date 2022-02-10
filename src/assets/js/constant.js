@@ -154,3 +154,58 @@ export const termiteAmount = {
   2: '中量',
   3: '大量'
 }
+
+// 柱状图配置
+export const barOption = (xData, yData) => {
+  return {
+    xAxis: {
+      type: 'category',
+      data: xData,
+    },
+    yAxis: {
+      type: 'value',
+      splitNumber: 1,
+    },
+    series: [
+      {
+        data: yData,
+        type: 'bar',
+        label: {
+          normal: {
+            show: true,
+            position: 'top'
+          }
+        }
+      }
+    ]
+  }
+}
+
+// 折线图配置
+export const lineOption = (xData, yData) => {
+  return {
+    xAxis: {
+      type: 'category',
+      data: xData
+    },
+    yAxis: {
+      type: 'value',
+      splitNumber: 1,
+    },
+    series: [
+      {
+        data: yData,
+        type: 'line',
+        label: {
+          normal: {
+            show: true,
+            position: 'top'
+          }
+        },
+        lineStyle: {
+          width: 3
+        }
+      }
+    ]
+  };
+}

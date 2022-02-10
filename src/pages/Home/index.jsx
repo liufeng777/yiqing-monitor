@@ -1,8 +1,8 @@
 import React from 'react';
-import { Tooltip, Button } from 'antd';
+import { Tooltip, Button, Tag } from 'antd';
 import { SelectArea } from '../../component/SelectArea';
 import { overviewStatistic, projectMap, warningList } from '../../api';
-import { warningType } from '../../assets/js/constant';
+import { warningType, barOption, lineOption } from '../../assets/js/constant';
 import { Header } from '../../component/Header';
 import { EchartSearch } from './EchartSearch';
 import { WarnProjectRank } from './WarnProjectRank';
@@ -11,8 +11,9 @@ import ProjectMap from './ProjectMap';
 import './index.less';
 
 import * as echarts from 'echarts/core';
-import { ToolboxComponent, LegendComponent } from 'echarts/components';
-import { PieChart } from 'echarts/charts';
+import { ToolboxComponent, LegendComponent, GridComponent } from 'echarts/components';
+import { PieChart, BarChart, LineChart } from 'echarts/charts';
+import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 
 // redux
@@ -21,7 +22,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 echarts.use(
-  [ToolboxComponent, LegendComponent, PieChart, CanvasRenderer]
+  [ // 饼图
+    ToolboxComponent,LegendComponent, PieChart,
+    // 柱状图
+    GridComponent, BarChart,
+    // 折线图
+    LineChart, UniversalTransition,
+    CanvasRenderer
+  ]
 );
 
 class HomePage extends React.Component {
@@ -35,12 +43,17 @@ class HomePage extends React.Component {
       data: {},
       projects: [],
       tableData: [],
-      activeProject: null
+      activeProject: null,
+      // 按年按月参数
+      projAndPointTimeType: 1,
+      projAndPointIndex: 0,
+      warnAndInspectTimeType: 1,
+      warnAndInspectIndex: 0
     }
   }
 
   componentDidMount() {
-    this.getData()
+    this.getStatistic()
     this.getProjectsInMap()
     this.getWarning()
     this.getMapCenterAndZoom()
@@ -51,24 +64,34 @@ class HomePage extends React.Component {
       icon: 'icon-gongcheng',
       count: this.state.data.project_count,
       title: '工程',
-      path: '/project'
+      path: '/project',
+      bgColor: 'processing'
     }, {
       icon: 'icon-f-location',
       count: this.state.data.point_count,
       title: '布点',
-      path: '/point'
+      path: '/point',
+      bgColor: 'processing'
     }]
 
     const rightDataArr = [{
+      icon: 'icon-jinggao',
+      count: this.getWarnCount(this.state.data.warns_count),
+      title: '报警',
+      path: '/warning',
+      bgColor: 'error'
+    }, {
       icon: 'icon-tance',
       count: this.state.data.detect_count,
       title: '探测',
-      path: '/detect'
+      path: '/detect',
+      bgColor: 'processing'
     }, {
       icon: 'icon-jianchajieguo',
       count: this.state.data.inspect_count,
       title: '检查',
-      path: '/inspect'
+      path: '/inspect',
+      bgColor: 'processing'
     }]
 
     return (
@@ -90,7 +113,7 @@ class HomePage extends React.Component {
             <section>
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{margin: '0px 10px'}} onClick={() => {
-                  this.getData()
+                  this.getStatistic()
                   this.getProjectsInMap()
                   this.getWarning()
                   this.getMapCenterAndZoom();
@@ -112,7 +135,7 @@ class HomePage extends React.Component {
                     tableData: [],
                     activeProject: null
                   }), () => {
-                    this.getData()
+                    this.getStatistic()
                     this.getProjectsInMap()
                     this.getWarning()
                   })
@@ -139,10 +162,11 @@ class HomePage extends React.Component {
                   return (
                     <li key={index}>
                       <span className="type-name">{item.title}：</span>
-                      <span className="number-value" onClick={() => {
+                      <Tag color={item.bgColor} onClick={() => {
                         this.props.history.push(item.path);
-                      }}
-                      >{item.count}</span>
+                      }}>
+                        {item.count}
+                      </Tag>
                     </li>
                   )
                 })
@@ -150,8 +174,20 @@ class HomePage extends React.Component {
             </ul>
             {/* 按年按月 */}
             <EchartSearch
-              onChangeTime={(val) => {}}
-              onChangeIndex={(val) => {}}
+              onChangeTimeType={(val) => {
+                this.setState({
+                  projAndPointTimeType: val
+                }, () => {
+                  this.getStatistic()
+                })
+              }}
+              onChangeIndex={(val) => {
+                this.setState({
+                  projAndPointIndex: val,
+                }, () => {
+                  this.getStatistic()
+                })
+              }}
             />
             {/* echats */}
             <section className="echart-box">
@@ -192,12 +228,13 @@ class HomePage extends React.Component {
                 rightDataArr.map((item, index) => {
                   return (
                     <li key={index}>
-                      <section>
+                      <section className='right-data'>
                         <span className="type-name">{item.title}：</span>
-                        <span className="number-value" onClick={() => {
-                          this.props.history.push(item.path);
-                        }}
-                        >{item.count}</span>
+                        <Tag color={item.bgColor} onClick={() => {
+                            this.props.history.push(item.path);
+                          }}>
+                          {item.count}
+                        </Tag>
                       </section>
                     </li>
                   )
@@ -206,8 +243,20 @@ class HomePage extends React.Component {
             </ul>
             {/* 按年按月 */}
             <EchartSearch
-              onChangeTime={(val) => {}}
-              onChangeIndex={(val) => {}}
+              onChangeTimeType={(val) => {
+                this.setState({
+                  warnAndInspectTimeType: val
+                }, () => {
+                  this.getStatistic()
+                })
+              }}
+              onChangeIndex={(val) => {
+                this.setState({
+                  warnAndInspectIndex: val,
+                }, () => {
+                  this.getStatistic()
+                })
+              }}
             />
 
             {/* echats */}
@@ -223,7 +272,7 @@ class HomePage extends React.Component {
                 <i className="iconfont icon-jianchajieguo" />
                 检查数
               </p>
-              <section className="echart-data" id="detect-echart" />
+              <section className="echart-data" id="inspect-echart" />
             </section>
           </section>
         </section>
@@ -245,48 +294,104 @@ class HomePage extends React.Component {
       </section>
     );
   }
-
+  
+  // 获取报警总数
+  getWarnCount = (data) => {
+    if (data) {
+      return Object.keys(data).reduce((pre, cur) => {
+        return data[pre] + data[cur]
+       })  
+    }
+  }
+  
   // 获取数据
-  getData = async () => {
+  getStatistic = async () => {
     const res = await overviewStatistic({
-      area_code: this.state.area_code
+      area_code: this.state.area_code,
+      cfg_time_type: this.state.projAndPointTimeType,
+      cfg_index: this.state.projAndPointIndex,
+      supv_time_type: this.state.warnAndInspectTimeType,
+      supv_index: this.state.warnAndInspectIndex
     });
     if (res) {
       this.setState({
         data: res
       })
-      const data = Object.keys(res.warns_count).map(key => {
-        return {
-          value: res.warns_count[key],
-          name: warningType[key] + '(' + res.warns_count[key] + ')'
-        }
-      })
-      const chartDom = document.getElementById('warn-type-echart');
-      const warnChart = echarts.init(chartDom);
-      const option = {
-        legend: {
-          top: 'bottom'
-        },
-        color: ['#ee6666', '#fac858', '#73c0de'],
-        series: [
-          {
-            name: '',
-            type: 'pie',
-            radius: [10, 60],
-            center: ['50%', '50%'],
-            roseType: 'area',
-            itemStyle: {
-              borderRadius: 4
-            },
-            data
-          }
-        ]
-      }
-
-      option && warnChart.setOption(option);
+      // 报警类型
+      this.getWarnTypeEchart(res);
+      // 工程增量
+      this.getProjectEchart(res);
+      // 布点增量
+      this.getPointEchart(res);
+      // 已处理报警
+      this.getWarnEchart(res);
+      // 检查数
+      this.getInspectEchart(res);
     }
   }
-  
+
+  // 报警类型的Echart
+  getWarnTypeEchart = (res) => {
+    // 报警类型的Echarts
+    const data = Object.keys(res.warns_count).map(key => {
+      return {
+        value: res.warns_count[key],
+        name: warningType[key] + '(' + res.warns_count[key] + ')'
+      }
+    })
+    const chartDom = document.getElementById('warn-type-echart');
+    const warnChart = echarts.init(chartDom);
+    const option = {
+      darkMode: true,
+      legend: {
+        top: 'bottom'
+      },
+      color: ['#ee6666', '#fac858', '#73c0de'],
+      series: [
+        {
+          name: '',
+          type: 'pie',
+          radius: [10, 60],
+          center: ['50%', '50%'],
+          roseType: 'area',
+          itemStyle: {
+            borderRadius: 4
+          },
+          data
+        }
+      ]
+    }
+    option && warnChart.setOption(option);
+  }
+  // 工程增量
+  getProjectEchart = (res) => {
+    const chartDom = document.getElementById('project-echart');
+    const projectChart = echarts.init(chartDom);
+    const option = barOption(res.project_time_names, res.project_counts);
+    option && projectChart.setOption(option);
+  }
+  // 布点增量
+  getPointEchart = (res) => {
+    const chartDom = document.getElementById('point-echart');
+    const pointChart = echarts.init(chartDom);
+    const option = lineOption(res.point_time_names, res.point_counts);
+    option && pointChart.setOption(option);
+  }
+  // 已处理报警
+  getWarnEchart = (res) => {
+    const chartDom = document.getElementById('warn-echart');
+    const warnChart = echarts.init(chartDom);
+    const option = barOption(res.warn_time_names, res.warn_counts);
+    option && warnChart.setOption(option);
+  }
+  // 检查数
+  getInspectEchart = (res) => {
+    const chartDom = document.getElementById('inspect-echart');
+    const inspectChart = echarts.init(chartDom);
+    const option = lineOption(res.inspect_time_names, res.inspect_counts);
+    option && inspectChart.setOption(option);
+  }
+
   // 获取工程
   getProjectsInMap = async () => {
     const res = await projectMap({
