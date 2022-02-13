@@ -23,7 +23,7 @@ export const PointDetail = (props) => {
   const [form] = Form.useForm();
   const initialValues = {
     ...detail,
-    project_id: detail.project_id + '',
+    project_id: (props.project_id || detail.project_id) + '',
     state: detail.state + ''
   }
   form.setFieldsValue(initialValues)
@@ -31,7 +31,10 @@ export const PointDetail = (props) => {
   useEffect(() => {
     async function fetchData () {
       if (props.visible) {
-        setDetail(props.detail || defaultDetail);
+        setDetail(props.detail || {
+          ...defaultDetail,
+          project_id: props.project_id
+        });
         const res = await projectList({
           get_count: 10,
           start_index: (currentPage - 1) * 10,
@@ -76,7 +79,7 @@ export const PointDetail = (props) => {
         <Form.Item label="所属工程" name="project_id"
           rules={[{ required: true, message: '请选择所属工程' }]}
         >
-          <Select value={detail.project_id + ''} disabled={props.detail}
+          <Select value={(props.project_id || detail.project_id)} disabled={props.detail || props.project_id}
             onChange={(val) => {
               setDetail({
                 ...detail,

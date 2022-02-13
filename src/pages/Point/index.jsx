@@ -32,7 +32,7 @@ class PointPage extends React.Component {
       detail: null,
       selectedKeys: [],
       // 搜索
-      proj_keyword: '',
+      proj_keyword: this.props.projId || '',
       point_keyword: '',
       state: '',
       device_code: '',
@@ -51,7 +51,7 @@ class PointPage extends React.Component {
     return (
       <section className="point-page page-view">
         <header className="header">
-          <span className="title">布点列表</span>
+          <span className="title">{this.props.projId ? '' : '布点列表'}</span>
           <span>
             <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
               this.onDelete(this.state.selectedKeys)
@@ -85,20 +85,24 @@ class PointPage extends React.Component {
           <ul className="search-box">
             <li>
               <span className="label">工程：</span>
-              <Input
-                value={this.state.proj_keyword}
-                onChange={(e) => {
-                  this.setState({
-                    proj_keyword: e.target.value
-                  })
-                }}
-                allowClear
-                placeholder="名称"
-                onPressEnter={() => {
-                  this.getAll()
-                }}
-                style={{ width: 120 }}
-              />
+              {
+                !this.props.projId ?
+                <Input
+                  value={this.state.proj_keyword}
+                  onChange={(e) => {
+                    this.setState({
+                      proj_keyword: e.target.value
+                    })
+                  }}
+                  allowClear
+                  placeholder="名称"
+                  onPressEnter={() => {
+                    this.getAll()
+                  }}
+                  style={{ width: 120 }}
+                /> : <span style={{marginRight: 20}}>{this.props.projName}</span>
+              }
+              
             </li>
             <li>
               <span className="label">布点：</span>
@@ -326,6 +330,7 @@ class PointPage extends React.Component {
           }}
           onSubmit={(values) => this.onSubmit(values)}
           detail={this.state.detail}
+          project_id={this.props.projId || ''}
         />
 
         {/* 导入csv */}
