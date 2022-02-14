@@ -42,7 +42,8 @@ class WarningPage extends React.Component {
       warn_type: '',
       confirm_res: '',
       begin_timestamp: '',
-      end_timestamp: ''
+      end_timestamp: '',
+      ...this.props.warnSearchInfo
     }
   };
 
@@ -177,6 +178,18 @@ class WarningPage extends React.Component {
                   this.props.setAreaCode(this.state.area_code)
                   this.props.setAreaPoint(this.state.area_point)
                   this.getAll()
+                  this.props.setSearchInfo({
+                    type: 'warn',
+                    data: {
+                      proj_keyword: this.state.proj_keyword,
+                      point_keyword: this.state.point_keyword,
+                      area_code: this.state.area_code,
+                      warn_type: this.state.warn_type,
+                      confirm_res: this.state.confirm_res,
+                      begin_timestamp: this.state.begin_timestamp,
+                      end_timestamp: this.state.end_timestamp
+                    }
+                  });
                 }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
@@ -195,6 +208,10 @@ class WarningPage extends React.Component {
                   this.setState(() => (searchInfo), this.getAll)
                   this.props.setAreaCode(0)
                   this.props.setAreaPoint({lng: 108.55, lat: 34.32})
+                  this.props.setSearchInfo({
+                    type: 'warn',
+                    data: searchInfo
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -278,6 +295,10 @@ class WarningPage extends React.Component {
               this.setState(searchInfo, () => {
                 this.getAll()
               });
+              this.props.setSearchInfo({
+                type: 'warn',
+                data: searchInfo
+              });
             }}
             onChange={(pageNumber) => {
               const searchInfo = {
@@ -285,6 +306,10 @@ class WarningPage extends React.Component {
               }
               this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'warn',
+                data: searchInfo
               });
             }}
           />
@@ -375,7 +400,8 @@ class WarningPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
-    areaPoint: state.areaPoint
+    areaPoint: state.areaPoint,
+    warnSearchInfo: state.searchInfo.warn
   };
 };
 

@@ -8,12 +8,17 @@ import { throttle } from 'throttle-debounce';
 import './index.less';
 import CacheTags from '../../component/CacheTags';
 
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 // api
 import { cardList, cardBatchDelete, cardAdd, cardChange, cardExport } from '../../api';
 
 const { Option } = Select;
 
-export default class CardPage extends React.Component {
+class CardPage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -28,7 +33,8 @@ export default class CardPage extends React.Component {
       // 搜索
       keyword: '',
       type: '',
-      state: ''
+      state: '',
+      ...this.props.cardSearchInfo
     }
   };
 
@@ -124,17 +130,32 @@ export default class CardPage extends React.Component {
             </li>
             <li>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
+                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                  this.getAll();
+                  this.props.setSearchInfo({
+                    type: 'card',
+                    data: {
+                      keyword: this.state.keyword,
+                      type: this.state.type,
+                      state: this.state.state
+                    }
+                  })
+                }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     keyword: '',
                     type: '',
                     state: ''
-                  }), this.getAll)
+                  }
+                  this.setState(() => (searchInfo), this.getAll)
+                  this.props.setSearchInfo({
+                    type: 'card',
+                    data: searchInfo
+                  })
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -199,7 +220,8 @@ export default class CardPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -208,19 +230,29 @@ export default class CardPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
               });
+              this.props.setSearchInfo({
+                type: 'card',
+                data: searchInfo
+              })
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
               });
+              this.props.setSearchInfo({
+                type: 'card',
+                data: searchInfo
+              })
             }}
           />
         </section>
@@ -297,3 +329,17 @@ export default class CardPage extends React.Component {
     console.log(res)
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    cardSearchInfo: state.searchInfo.card
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(CardPage);

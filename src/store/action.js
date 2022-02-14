@@ -39,3 +39,11 @@ export const switchTag = (val) => {
     payload: val,
   };
 }
+
+// 设置搜索信息 payload: {type: string; data: any}
+export const setSearchInfo = (val) => {
+  return {
+    type: types.SET_SEARCH_INFO,
+    payload: val
+  }
+}

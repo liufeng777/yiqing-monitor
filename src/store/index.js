@@ -6,7 +6,20 @@ const initialState = {
   areaCode: +sessionStorage.getItem('areaCode') || 0,
   areaPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
   cacheTages: [],
-  activeTag: ''
+  activeTag: '',
+  // 各个页面的搜索信息
+  searchInfo: {
+    admin: {},
+    card: {},
+    detect: {},
+    device: {},
+    inspect: {},
+    point: {},
+    project: {},
+    projectUser: {},
+    user: {},
+    warn: {}
+  }
 };
 
 const reducer = (state = initialState, action) => {
@@ -35,6 +48,19 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         activeTag: action.payload
+      }
+    case types.SET_SEARCH_INFO:
+      const oldData = state.searchInfo[action.payload.type];
+      const searchInfo = {
+        ...state.searchInfo,
+        [action.payload.type]: {
+          ...oldData,
+          ...action.payload.data
+        }
+      };
+      return {
+        ...state,
+        searchInfo
       }
     default:
       return state;

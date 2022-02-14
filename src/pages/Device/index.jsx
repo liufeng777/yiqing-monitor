@@ -7,12 +7,17 @@ import { throttle } from 'throttle-debounce';
 import './index.less';
 import CacheTags from '../../component/CacheTags';
 
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 // api
 import { deviceList, deviceBatchDelete, deviceAdd, deviceChange } from '../../api';
 
 const { Option } = Select;
 
-export default class DevicePage extends React.Component {
+class DevicePage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -27,7 +32,8 @@ export default class DevicePage extends React.Component {
       // 搜索
       keyword: '',
       type: '',
-      state: ''
+      state: '',
+      ...this.props.deviceSearchInfo
     }
   };
 
@@ -123,17 +129,32 @@ export default class DevicePage extends React.Component {
             </li>
             <li>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
+                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                  this.props.setSearchInfo({
+                    type: 'device',
+                    data: {
+                      keyword: this.state.keyword,
+                      type: this.state.type,
+                      state: this.state.state
+                    }
+                  });
+                  this.getAll()
+                }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     keyword: '',
                     type: '',
                     state: ''
-                  }), this.getAll)
+                  }
+                  this.setState(() => (searchInfo), this.getAll);
+                  this.props.setSearchInfo({
+                    type: 'device',
+                    data: searchInfo
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -194,7 +215,8 @@ export default class DevicePage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -203,18 +225,28 @@ export default class DevicePage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'device',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'device',
+                data: searchInfo
               });
             }}
           />
@@ -286,3 +318,17 @@ export default class DevicePage extends React.Component {
     }
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    deviceSearchInfo: state.searchInfo.device
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(DevicePage);
