@@ -7,10 +7,15 @@ import { ProjectDetail } from './Detail';
 import { throttle } from 'throttle-debounce';
 import './index.less';
 
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 // api
 import { projectGet, projectUserList, projectUserUnbind, projectUserBind, projectUserChange, projectUserExport } from '../../api';
 
-export default class ProjectUserPage extends React.Component {
+class ProjectUserPage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -23,7 +28,8 @@ export default class ProjectUserPage extends React.Component {
       detail: null,
       projectName: '',
       // 搜索条件
-      user_keyword: ''
+      user_keyword: '',
+      ...this.props.projectUserSearchInfo
     }
   };
 
@@ -86,7 +92,15 @@ export default class ProjectUserPage extends React.Component {
             </li>
             <li>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
+                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                  this.props.setSearchInfo({
+                    type: 'projectUser',
+                    data: {
+                      user_keyword: this.state.user_keyword
+                    }
+                  });
+                  this.getAll()
+                }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
@@ -94,7 +108,13 @@ export default class ProjectUserPage extends React.Component {
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
                   this.setState(() => ({
                     user_keyword: ''
-                  }), this.getAll)
+                  }), this.getAll);
+                  this.props.setSearchInfo({
+                    type: 'projectUser',
+                    data: {
+                      user_keyword: ''
+                    }
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -136,7 +156,8 @@ export default class ProjectUserPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -145,18 +166,28 @@ export default class ProjectUserPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'projectUser',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'projectUser',
+                data: searchInfo
               });
             }}
           />
@@ -247,3 +278,18 @@ export default class ProjectUserPage extends React.Component {
     const res = await projectUserExport({});
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    areaCode: state.areaCode,
+    projectUserSearchInfo: state.searchInfo.projectUser
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(ProjectUserPage);

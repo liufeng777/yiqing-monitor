@@ -40,7 +40,8 @@ class WarningPage extends React.Component {
       warn_type: '',
       confirm_res: '',
       begin_timestamp: '',
-      end_timestamp: ''
+      end_timestamp: '',
+      ...this.props.warnSearchInfo
     }
   };
 
@@ -173,13 +174,25 @@ class WarningPage extends React.Component {
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
                   this.props.setAreaCode(this.state.area_code)
                   this.getAll()
+                  this.props.setSearchInfo({
+                    type: 'warn',
+                    data: {
+                      proj_keyword: this.state.proj_keyword,
+                      point_keyword: this.state.point_keyword,
+                      area_code: this.state.area_code,
+                      warn_type: this.state.warn_type,
+                      confirm_res: this.state.confirm_res,
+                      begin_timestamp: this.state.begin_timestamp,
+                      end_timestamp: this.state.end_timestamp
+                    }
+                  });
                 }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     proj_keyword: '',
                     point_keyword: '',
                     area_code: '',
@@ -187,7 +200,12 @@ class WarningPage extends React.Component {
                     confirm_res: '',
                     begin_timestamp: '',
                     end_timestamp: ''
-                  }), this.getAll)
+                  }
+                  this.setState(() => (searchInfo), this.getAll)
+                  this.props.setSearchInfo({
+                    type: 'warn',
+                    data: searchInfo
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -252,7 +270,8 @@ class WarningPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -261,18 +280,28 @@ class WarningPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'warn',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'warn',
+                data: searchInfo
               });
             }}
           />
@@ -364,6 +393,7 @@ class WarningPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    warnSearchInfo: state.searchInfo.warn
   };
 };
 

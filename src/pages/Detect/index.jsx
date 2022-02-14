@@ -39,7 +39,8 @@ class DetectPage extends React.Component {
       warn_type: '',
       detect_type: '',
       begin_timestamp: '',
-      end_timestamp: ''
+      end_timestamp: '',
+      ...this.props.detectSearchInfo
     }
   };
 
@@ -169,7 +170,19 @@ class DetectPage extends React.Component {
             <li>
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
-                  this.props.setAreaCode(this.state.area_code)
+                  this.props.setAreaCode(this.state.area_code);
+                  this.props.setSearchInfo({
+                    type: 'detect',
+                    data: {
+                      proj_keyword: this.state.proj_keyword,
+                      point_keyword: this.state.point_keyword,
+                      area_code: this.state.area_code,
+                      warn_type: this.state.warn_type,
+                      detect_type: this.state.detect_type,
+                      begin_timestamp: this.state.begin_timestamp,
+                      end_timestamp: this.state.end_timestamp,
+                    }
+                  })
                   this.getAll()
                 }}>
                   <i className="iconfont icon-sousuo" />
@@ -177,7 +190,7 @@ class DetectPage extends React.Component {
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     proj_keyword: '',
                     point_keyword: '',
                     area_code: '',
@@ -185,7 +198,12 @@ class DetectPage extends React.Component {
                     detect_type: '',
                     begin_timestamp: '',
                     end_timestamp: ''
-                  }), this.getAll)
+                  }
+                  this.setState(() => (searchInfo), this.getAll);
+                  this.props.setSearchInfo({
+                    type: 'detect',
+                    data: searchInfo
+                  })
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -235,7 +253,8 @@ class DetectPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -250,6 +269,13 @@ class DetectPage extends React.Component {
               }, () => {
                 this.getAll()
               });
+              this.props.setSearchInfo({
+                type: 'detect',
+                data: {
+                  currentPage: 1,
+                  pageSize
+                }
+              })
             }}
             onChange={(pageNumber) => {
               this.setState({
@@ -257,6 +283,12 @@ class DetectPage extends React.Component {
               }, () => {
                 this.getAll()
               });
+              this.props.setSearchInfo({
+                type: 'detect',
+                data: {
+                  currentPage: pageNumber
+                }
+              })
             }}
           />
         </section>
@@ -335,6 +367,7 @@ class DetectPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    detectSearchInfo: state.searchInfo.detect
   };
 };
 

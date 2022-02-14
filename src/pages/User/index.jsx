@@ -34,6 +34,7 @@ class UserPage extends React.Component {
       keyword: '',
       project_owner_type: '',
       area_code: this.props.areaCode,
+      ...this.props.userSearchInfo
     }
   };
 
@@ -113,18 +114,31 @@ class UserPage extends React.Component {
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
                   this.props.setAreaCode(this.state.area_code)
-                  this.getAll()
+                  this.getAll();
+                  this.props.setSearchInfo({
+                    type: 'user',
+                    data: {
+                      keyword: this.state.keyword,
+                      project_owner_type: this.state.project_owner_type,
+                      area_code: this.state.area_code
+                    }
+                  });
                 }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     keyword: '',
                     project_owner_type: '',
                     area_code: ''
-                  }), this.getAll)
+                  }
+                  this.setState(() => (searchInfo), this.getAll)
+                  this.props.setSearchInfo({
+                    type: 'user',
+                    data: searchInfo
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -176,7 +190,8 @@ class UserPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -185,18 +200,28 @@ class UserPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'user',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'user',
+                data: searchInfo
               });
             }}
           />
@@ -276,6 +301,7 @@ class UserPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    userSearchInfo: state.searchInfo.user
   };
 };
 

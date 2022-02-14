@@ -3,7 +3,20 @@ import { types } from './types';
 
 const initialState = {
   tokenInvalid: false,
-  areaCode: +sessionStorage.getItem('areaCode') || 0
+  areaCode: +sessionStorage.getItem('areaCode') || 0,
+  // 各个页面的搜索信息
+  searchInfo: {
+    admin: {},
+    card: {},
+    detect: {},
+    device: {},
+    inspect: {},
+    point: {},
+    project: {},
+    projectUser: {},
+    user: {},
+    warn: {}
+  }
 };
 
 const reducer = (state = initialState, action) => {
@@ -17,6 +30,19 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         areaCode: action.payload
+      }
+    case types.SET_SEARCH_INFO:
+      const oldData = state.searchInfo[action.payload.type];
+      const searchInfo = {
+        ...state.searchInfo,
+        [action.payload.type]: {
+          ...oldData,
+          ...action.payload.data
+        }
+      };
+      return {
+        ...state,
+        searchInfo
       }
     default:
       return state;

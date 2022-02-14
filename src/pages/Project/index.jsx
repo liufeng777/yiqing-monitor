@@ -30,6 +30,7 @@ class ProjectPage extends React.Component {
       proj_keyword: '',
       user_keyword: '',
       area_code: this.props.areaCode,
+      ...this.props.projectSearchInfo
     }
   };
 
@@ -112,19 +113,32 @@ class ProjectPage extends React.Component {
             <li>
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
-                  this.props.setAreaCode(this.state.area_code)
-                  this.getAll()
+                  this.props.setAreaCode(this.state.area_code);
+                  this.getAll();
+                  this.props.setSearchInfo({
+                    type: 'project',
+                    data: {
+                      proj_keyword: this.state.proj_keyword,
+                      user_keyword: this.state.user_keyword,
+                      area_code: this.state.area_code,
+                    }
+                  });
                 }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000,() => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     proj_keyword: '',
                     user_keyword: '',
                     area_code: '',
-                  }), this.getAll)
+                  }
+                  this.setState(() => (searchInfo), this.getAll);
+                  this.props.setSearchInfo({
+                    type: 'project',
+                    data: searchInfo
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -182,7 +196,8 @@ class ProjectPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -191,18 +206,28 @@ class ProjectPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'project',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'project',
+                data: searchInfo
               });
             }}
           />
@@ -330,6 +355,7 @@ class ProjectPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    projectSearchInfo: state.searchInfo.project
   };
 };
 

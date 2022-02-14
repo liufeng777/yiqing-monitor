@@ -38,6 +38,7 @@ class PointPage extends React.Component {
       device_code: '',
       device_type: '',
       area_code: this.props.areaCode,
+      ...this.props.pointSearchInfo
     }
   };
 
@@ -182,18 +183,36 @@ class PointPage extends React.Component {
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
                   this.props.setAreaCode(this.state.area_code)
                   this.getAll()
+                  this.props.setSearchInfo({
+                    type: 'point',
+                    data: {
+                      proj_keyword: this.state.proj_keyword,
+                      point_keyword: this.state.point_keyword,
+                      state: this.state.state,
+                      area_code: this.state.area_code,
+                      device_code: this.state.device_code,
+                      device_type: this.state.device_type
+                    }
+                  });
                 }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     proj_keyword: '',
                     point_keyword: '',
                     state: '',
-                    area_code: ''
-                  }), this.getAll)
+                    area_code: '',
+                    device_code: '',
+                    device_type: ''
+                  }
+                  this.setState(() => (searchInfo), this.getAll);
+                  this.props.setSearchInfo({
+                    type: 'point',
+                    data: searchInfo
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -293,7 +312,8 @@ class PointPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -302,18 +322,28 @@ class PointPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'point',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'point',
+                data: searchInfo
               });
             }}
           />
@@ -446,6 +476,7 @@ class PointPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    pointSearchInfo: state.searchInfo.point
   };
 };
 

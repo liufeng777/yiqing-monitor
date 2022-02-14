@@ -38,7 +38,8 @@ class InspectPage extends React.Component {
       state: '',
       measure_type: '',
       begin_timestamp: '',
-      end_timestamp: ''
+      end_timestamp: '',
+      ...this.props.inspectSearchInfo
     }
   };
 
@@ -181,7 +182,20 @@ class InspectPage extends React.Component {
             <li>
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
-                  this.props.setAreaCode(this.state.area_code)
+                  this.props.setAreaCode(this.state.area_code);
+                  this.props.setSearchInfo({
+                    type: 'inspect',
+                    data: {
+                      proj_keyword: this.state.proj_keyword,
+                      point_keyword: this.state.point_keyword,
+                      area_code: this.state.area_code,
+                      warn_type: this.state.warn_type,
+                      state: this.state.state,
+                      measure_type: this.state.measure_type,
+                      begin_timestamp: this.props.begin_timestamp,
+                      end_timestamp: this.props.end_timestamp
+                    }
+                  });
                   this.getAll()
                 }}>
                   <i className="iconfont icon-sousuo" />
@@ -189,7 +203,7 @@ class InspectPage extends React.Component {
               </Tooltip>
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  this.setState(() => ({
+                  const searchInfo = {
                     proj_keyword: '',
                     point_keyword: '',
                     area_code: '',
@@ -198,7 +212,12 @@ class InspectPage extends React.Component {
                     measure_type: '',
                     begin_timestamp: '',
                     end_timestamp: ''
-                  }), this.getAll)
+                  }
+                  this.setState(() => (searchInfo), this.getAll);
+                  this.props.setSearchInfo({
+                    type: 'inspect',
+                    data: searchInfo
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -262,7 +281,8 @@ class InspectPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -271,18 +291,28 @@ class InspectPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'inspect',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'inspect',
+                data: searchInfo
               });
             }}
           />
@@ -363,6 +393,7 @@ class InspectPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    inspectSearchInfo: state.searchInfo.inspect
   };
 };
 

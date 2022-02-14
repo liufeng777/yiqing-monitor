@@ -7,10 +7,15 @@ import MD5 from 'crypto-js/md5';
 import { throttle } from 'throttle-debounce';
 import './index.less';
 
+// redux
+import * as actions from '../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 // api
 import { adminList, adminDelete, adminAdd, adminChange } from '../../api';
 
-export default class AdminPage extends React.Component {
+class AdminPage extends React.Component {
   constructor (props) {
     super (props);
     this.state = {
@@ -21,7 +26,8 @@ export default class AdminPage extends React.Component {
       pageSize: 30,
       showDetail: false,
       type: 'add',
-      detail: null
+      detail: null,
+      ...this.props.adminSearchInfo
     }
   };
 
@@ -69,7 +75,15 @@ export default class AdminPage extends React.Component {
             </li>
             <li>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
+                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                  this.props.setSearchInfo({
+                    type: 'admin',
+                    data: {
+                      keyword: this.state.keyword
+                    }
+                  });
+                  this.getAll()
+                }}>
                   <i className="iconfont icon-sousuo" />
                 </Button>
               </Tooltip>
@@ -77,7 +91,11 @@ export default class AdminPage extends React.Component {
                 <Button shape="circle" type="primary" onClick={throttle(1000, () => {
                   this.setState(() => ({
                     keyword: ''
-                  }), this.getAll)
+                  }), this.getAll);
+                  this.props.setSearchInfo({
+                    type: 'admin',
+                    data: {keyword: ''}
+                  });
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -125,7 +143,8 @@ export default class AdminPage extends React.Component {
             />
           </Table>
           <Pagination
-            defaultCurrent={this.state.currentPage}
+            defaultCurrent={1}
+            current={this.state.currentPage}
             pageSize={this.state.pageSize}
             showTotal={() => `总数 ${this.state.total} `}
             total={this.state.total}
@@ -134,18 +153,28 @@ export default class AdminPage extends React.Component {
             }}
             showSizeChanger
             onShowSizeChange={(currentPage, pageSize) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: 1,
                 pageSize
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'admin',
+                data: searchInfo
               });
             }}
             onChange={(pageNumber) => {
-              this.setState({
+              const searchInfo = {
                 currentPage: pageNumber
-              }, () => {
+              }
+              this.setState(searchInfo, () => {
                 this.getAll()
+              });
+              this.props.setSearchInfo({
+                type: 'admin',
+                data: searchInfo
               });
             }}
           />
@@ -220,3 +249,18 @@ export default class AdminPage extends React.Component {
     }
   }
 };
+
+const mapStateToProps = (state) => {
+  return {
+    areaCode: state.areaCode,
+    adminSearchInfo: state.searchInfo.admin
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(AdminPage);
