@@ -3,6 +3,7 @@ import { Form, Input, Select, Button, InputNumber, message, Modal } from 'antd';
 import { projectState } from '../../assets/js/constant';
 import { SelectArea } from '../../component/SelectArea';
 import { throttle } from 'throttle-debounce';
+import { DateAndTime } from '../../pages/Card/DateAndTime';
 
 const imgType = ['image/jpg', 'image/jpeg', 'image/png'];
 
@@ -11,13 +12,21 @@ const { Option } = Select;
 const defaultDetail = {
   project_id: '',
   name: '',
+  project_code: '',
   area_code: '',
   state: 1,
   comment: '',
   image_file: '',
   image_path: '',
-  manu_detect_period: 14,
-  inspect_period: 60
+  address: '',
+  building_area: '',
+  building_number: '',
+  constructor: '',
+  constructor_phone: '',
+  builder: '',
+  builder_user: '',
+  builder_phone: '',
+  build_timestamp: 0
 }
 
 export const ProjectDetail = (props) => {
@@ -77,6 +86,25 @@ export const ProjectDetail = (props) => {
           }}
           />
         </Form.Item>
+        <Form.Item label="工程编码" name="project_code"
+          rules={[{ 
+            validator(rule, value) {
+              const regx = /^(?![A-Z]+$)(?!\d+$)[0-9A-Z]{1,16}/;
+              if (value && !regx.test(value)) {
+                return Promise.reject('由大写英文+数字组成, 最多16字符')
+              }
+              return Promise.resolve()
+            }
+          }]}
+        >
+          <Input maxLength={16} value={detail.project_code} onChange={(e) => {
+            setDetail({
+              ...detail,
+              project_code: e.target.value.trim()
+            })
+          }}
+          />
+        </Form.Item>
         <Form.Item label="状态" name="state">
           <Select value={detail.state + ''} onChange={(val) => {
             setDetail({
@@ -91,24 +119,6 @@ export const ProjectDetail = (props) => {
               })
             }
           </Select>
-        </Form.Item>
-        <Form.Item label="手动探测周期(天)" name="manu_detect_period">
-          <InputNumber min={0} style={{width: 134}} value={detail.manu_detect_period} onChange={(val) => {
-            setDetail({
-              ...detail,
-              manu_detect_period: val
-            })
-          }}
-          />
-        </Form.Item>
-        <Form.Item label="检查周期(天)" name="inspect_period">
-          <InputNumber min={0} style={{width: 134}} value={detail.inspect_period} onChange={(val) => {
-            setDetail({
-              ...detail,
-              inspect_period: val
-            })
-          }}
-          />
         </Form.Item>
         <Form.Item label="图片" name="image_file">
           <div className="upload-image">
@@ -138,6 +148,96 @@ export const ProjectDetail = (props) => {
             setDetail({
               ...detail,
               comment: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="工程地址" name="address">
+          <Input maxLength={128} value={detail.address} onChange={(e) => {
+            setDetail({
+              ...detail,
+              address: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="建筑面积" name="building_area">
+          <Input maxLength={32} value={detail.building_area} onChange={(e) => {
+            setDetail({
+              ...detail,
+              building_area: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="幢数" name="building_number">
+          <InputNumber min={0} style={{width: 392}} value={detail.building_number} onChange={(val) => {
+            setDetail({
+              ...detail,
+              building_number: val
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="建设单位" name="constructor">
+          <Input maxLength={45} value={detail.constructor} onChange={(e) => {
+            setDetail({
+              ...detail,
+              constructor: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="建设单位联系人" name="constructor_user">
+          <Input maxLength={32} value={detail.constructor_user} onChange={(e) => {
+            setDetail({
+              ...detail,
+              constructor_user: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="建设单位电话" name="constructor_phone">
+          <Input maxLength={16} value={detail.constructor_phone} onChange={(e) => {
+            setDetail({
+              ...detail,
+              constructor_phone: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="施工单位" name="builder">
+          <Input maxLength={45} value={detail.builder} onChange={(e) => {
+            setDetail({
+              ...detail,
+              builder: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="施工单位联系人" name="builder_user">
+          <Input maxLength={32} value={detail.builder_user} onChange={(e) => {
+            setDetail({
+              ...detail,
+              builder_user: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="施工单位电话" name="builder_phone">
+          <Input maxLength={16} value={detail.builder_phone} onChange={(e) => {
+            setDetail({
+              ...detail,
+              builder_phone: e.target.value
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="开工日期" name="build_timestamp">
+          <DateAndTime value={detail.build_timestamp} onChange={(val) => {
+            setDetail({
+              ...detail,
+              build_timestamp: val
             })
           }}
           />
