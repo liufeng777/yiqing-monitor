@@ -141,6 +141,8 @@ export default class CardPage extends React.Component {
             </li>
           </ul>
           <Table
+            size="small"
+            bordered
             dataSource={this.state.tableData}
             rowKey={r => r.card_id}
             pagination={false}

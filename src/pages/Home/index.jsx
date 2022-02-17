@@ -300,10 +300,12 @@ class HomePage extends React.Component {
   
   // 获取报警总数
   getWarnCount = (data) => {
-    if (data) {
+    if (data && Object.keys(data).length) {
       return Object.keys(data).reduce((pre, cur) => {
         return data[pre] + data[cur]
        })  
+    } else {
+      return 0
     }
   }
   

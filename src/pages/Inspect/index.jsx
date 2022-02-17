@@ -46,7 +46,7 @@ class InspectPage extends React.Component {
       ...this.props.inspectSearchInfo,
       // 显示tab页
       tabsData: [],
-      activeKey: 'detect'
+      activeKey: 'inspect'
     }
   };
 
@@ -71,7 +71,7 @@ class InspectPage extends React.Component {
             })
           }}
         >
-          <TabPane tab="检查列表" key="detect" closable={false}>
+          <TabPane tab="检查列表" key="inspect" closable={false}>
             <section className='tab-content'>
               <header className="header">
                 <span/>
@@ -249,6 +249,8 @@ class InspectPage extends React.Component {
                   </li>
                 </ul>
                 <Table
+                  size="small"
+                  bordered
                   dataSource={this.state.tableData}
                   rowKey={r => r.inspect_id}
                   pagination={false}

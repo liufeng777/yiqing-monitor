@@ -133,6 +133,8 @@ class UserPage extends React.Component {
             </li>
           </ul>
           <Table
+            size="small"
+            bordered
             dataSource={this.state.tableData}
             rowKey={r => r.id}
             pagination={false}

@@ -175,14 +175,14 @@ class DetectPage extends React.Component {
                     />
                   </li>
                   <li>
-                    <span className="label">检测完成时间(起始)：</span>
+                    <span className="label">完成时间(起始)：</span>
                     <DateAndTime value={this.state.begin_timestamp} onChange={(val) => {
                       this.setState({ begin_timestamp: val})
                     }}
                     />
                   </li>
                   <li>
-                    <span className="label">检测完成时间(结束)：</span>
+                    <span className="label">完成时间(结束)：</span>
                     <DateAndTime value={this.state.end_timestamp} onChange={(val) => {
                       this.setState({ end_timestamp: val})
                     }}
@@ -233,6 +233,8 @@ class DetectPage extends React.Component {
                   </li>
                 </ul>
                 <Table
+                  size="small"
+                  bordered
                   dataSource={this.state.tableData}
                   rowKey={r => r.detect_id}
                   pagination={false}

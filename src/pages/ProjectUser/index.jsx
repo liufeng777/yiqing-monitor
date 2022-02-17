@@ -103,6 +103,8 @@ export default class ProjectUserPage extends React.Component {
             </li>
           </ul>
           <Table
+            size="small"
+            bordered
             dataSource={this.state.tableData}
             rowKey={r => r.project_id}
             pagination={false}

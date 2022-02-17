@@ -5,6 +5,7 @@ import { projectState } from '../../assets/js/constant';
 import { ProjectDetail } from './Detail';
 import { SelectArea } from '../../component/SelectArea';
 import { throttle } from 'throttle-debounce';
+import { getDateTime } from '../Card/DateAndTime';
 import './index.less';
 
 // redux
@@ -42,8 +43,8 @@ class ProjectPage extends React.Component {
   render () {
     return (
       <section className={this.props.showTab ? 'project-page tab-page' : "project-page page-view"}>
-        {!this.props.showTab && <header className="header">
-          <span className="title">工程列表</span>
+        <header className="header">
+          {this.props.showTab ? <span/> : <span className="title">工程列表</span>}
           <span>
             <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
               <i className="iconfont icon-daoru" />
@@ -65,7 +66,7 @@ class ProjectPage extends React.Component {
               添加
             </Button> 
           </span>
-        </header>}
+        </header>
         <section className="body">
           <ul className="search-box">
             <li>
@@ -133,25 +134,42 @@ class ProjectPage extends React.Component {
             </li>
           </ul>
           <Table
+            size="small"
             dataSource={this.state.tableData}
             rowKey={r => r.project_id}
             pagination={false}
+            scroll={{x: 1800}}
+            bordered
           >
             <Table.Column title="工程名" dataIndex="name" key="name" />
             <Table.Column title="区域" dataIndex="area_name" key="area_name"
               render={(val, record) => (<span>{record.area_code ? val : '全国'}</span>)}
             />
+            <Table.Column title="工程编码" dataIndex="project_code" key="project_code" />
             <Table.Column title="状态" min-width="80px" dataIndex="state" key="state"
               render={(val, _) => (<span>{projectState[val]}</span>)}
             />
-            <Table.Column title="手动探测周期(天)" width={140} dataIndex="manu_detect_period" key="manu_detect_period" />
-            <Table.Column title="检查周期(天)" width={120} dataIndex="inspect_period" key="inspect_period" />
             <Table.Column title="图片" width={60} dataIndex="image_path" key="image_path" render={(val, _) => 
               val ? 
               (<img alt="" src={window.globalData.host + val} style={{width: 60, height: 60}} />) : <></>
               }
             />
             <Table.Column title="描述" dataIndex="comment" key="comment" />
+            <Table.Column title="工程地址" dataIndex="address" key="address" />
+            <Table.Column title="建筑面积" dataIndex="building_area" key="building_area" />
+            <Table.Column title="幢数" dataIndex="building_number" key="building_number" />
+            <Table.ColumnGroup title="建设单位信息">
+              <Table.Column title="名称" dataIndex="constructor" key="constructor" />
+              <Table.Column title="联系人" dataIndex="constructor_user" key="constructor_user" />
+              <Table.Column title="电话" dataIndex="constructor_phone" key="constructor_phone" />
+            </Table.ColumnGroup>
+            <Table.ColumnGroup title="施工单位信息">
+              <Table.Column title="名称" dataIndex="builder" key="builder" />
+              <Table.Column title="联系人" dataIndex="builder_user" key="builder_user" />
+              <Table.Column title="电话" dataIndex="builder_phone" key="builder_phone" />
+            </Table.ColumnGroup>
+            <Table.Column title="开工日期" dataIndex="build_timestamp" key="build_timestamp"
+              render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}/>
             <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
               render={(_, record) => (
                 <>

@@ -86,6 +86,8 @@ export default class AdminPage extends React.Component {
             </li>
           </ul>
           <Table
+            size="small"
+            bordered
             dataSource={this.state.tableData}
             rowKey={r => r.admin_id}
             pagination={false}

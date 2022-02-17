@@ -236,6 +236,8 @@ class WarningPage extends React.Component {
                   </li>
                 </ul>
                 <Table
+                  size="small"
+                  bordered
                   dataSource={this.state.tableData}
                   rowKey={r => r.warn_id}
                   pagination={false}
@@ -358,12 +360,16 @@ class WarningPage extends React.Component {
           </TabPane>
           { this.state.tabsData.includes('project') &&
             <TabPane tab="工程列表" key="project" closable={true}>
-              <ProjectPage showTab={true} />
+              <section className='tab-content'>
+                <ProjectPage showTab={true} />
+              </section>
             </TabPane>
           }
           { this.state.tabsData.includes('point') &&
             <TabPane tab="布点列表" key="point" closable={true}>
-              <PointPage showTab={true} />
+              <section className='tab-content'>
+                <PointPage showTab={true} />
+              </section>
             </TabPane>
           }
         </Tabs>
