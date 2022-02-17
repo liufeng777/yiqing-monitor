@@ -42,8 +42,8 @@ class ProjectPage extends React.Component {
 
   render () {
     return (
-      <section className="project-page page-view">
-        <header className="header">
+      <section className={this.props.showTab ? 'project-page tab-page' : "project-page page-view"}>
+        {!this.props.showTab && <header className="header">
           <span className="title">工程列表</span>
           <span>
             <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
@@ -66,7 +66,7 @@ class ProjectPage extends React.Component {
               添加
             </Button> 
           </span>
-        </header>
+        </header>}
         <section className="body">
           <ul className="search-box">
             <li>

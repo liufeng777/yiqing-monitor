@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Pagination, Input, Tooltip, Modal, Button, message, Select } from 'antd';
+import { Table, Pagination, Input, Tooltip, Modal, Button, message, Select, Tabs } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { warningType, confirmRes } from '../../assets/js/constant';
 import { WarningDetail } from './Detail';
@@ -8,6 +8,8 @@ import { SelectArea } from '../../component/SelectArea';
 import { WarnInspect } from '../../component/WarnInspect';
 import { throttle } from 'throttle-debounce';
 import './index.less';
+import ProjectPage from '../Project';
+import PointPage from '../Point';
 
 // redux
 import * as actions from '../../store/action';
@@ -18,6 +20,7 @@ import { connect } from 'react-redux';
 import { warningList, warningBatchDelete, warningAdd, warningChange } from '../../api';
 
 const { Option } = Select
+const { TabPane } = Tabs;
 
 class WarningPage extends React.Component {
   constructor (props) {
@@ -41,7 +44,10 @@ class WarningPage extends React.Component {
       confirm_res: '',
       begin_timestamp: '',
       end_timestamp: '',
-      ...this.props.warnSearchInfo
+      ...this.props.warnSearchInfo,
+      // 显示tab页
+      tabsData: [],
+      activeKey: 'warn'
     }
   };
 
@@ -51,262 +57,317 @@ class WarningPage extends React.Component {
 
   render () {
     return (
-      <section className="warning-page page-view">
-        <header className="header">
-          <span className="title">报警数据列表</span>
-          <span>
-            <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
-              this.onDelete(this.state.selectedKeys)
-            })}
-            >
-              <i className="iconfont icon-piliangshanchu1" />
-              批量删除
-            </Button>
-            <Button className="import-btn header-btn" type="primary">
-              <i className="iconfont icon-daoru" />
-              导入
-            </Button>
-            <Button className="export-btn header-btn" type="primary">
-              <i className="iconfont icon-export" />
-              导出
-            </Button>
-            <Button className="add-btn header-btn" type="primary" onClick={throttle(1000, () => {
-              this.setState({
-                showDetail: true,
-                type: 'add',
-                detail: null
-              })
-            })}
-            >
-              <i className="iconfont icon-add1" />
-              添加
-            </Button> 
-          </span>
-        </header>
-        <section className="body">
-          <ul className="search-box">
-            <li>
-              <span className="label l-small">工程：</span>
-              <Input
-                value={this.state.proj_keyword}
-                onChange={(e) => {
-                  this.setState({
-                    proj_keyword: e.target.value
-                  })
-                }}
-                allowClear
-                placeholder="名称"
-                onPressEnter={() => {
-                  this.getAll()
-                }}
-                style={{ width: 100 }}
-              />
-            </li>
-            <li>
-              <span className="label l-small">布点：</span>
-              <Input
-                value={this.state.point_keyword}
-                onChange={(e) => {
-                  this.setState({
-                    point_keyword: e.target.value
-                  })
-                }}
-                allowClear
-                placeholder="名称、标签"
-                onPressEnter={() => {
-                  this.getAll()
-                }}
-                style={{ width: 120 }}
-              />
-            </li>
-            
-            <li>
-              <span className="label l-small">区域：</span>
-              <SelectArea width={320} area_code={this.state.area_code} visible onChange={({code}) => {
-                this.setState({ area_code: code})
-              }}
-              />
-            </li>
-            <li>
-              <span className="label l-large">报警类型：</span>
-              <Select value={this.state.warn_type + ''} style={{width: 100}} onChange={(val) => {
-                this.setState({ warn_type: +val})
-              }}
-              >
-                {
-                  Object.keys(warningType).map((key) => {
-                    return <Option value={key + ''} key={key}>{+key === 1 ? '全部' : warningType[key]}</Option>
-                  })
-                }
-              </Select>
-            </li>
-            <li>
-              <span className="label l-large">确认结果：</span>
-              <Select value={this.state.confirm_res + ''} style={{width: 100}} onChange={(val) => {
-                this.setState({ confirm_res: +val})
-              }}
-              >
-                {
-                  Object.keys(confirmRes).map((key) => {
-                    return <Option value={key + ''} key={key}>{+key === 0 ? '全部' : confirmRes[key]}</Option>
-                  })
-                }
-              </Select>
-            </li>
-          </ul>
-          <ul className="search-box" style={{borderTop: 'none'}}>
-            <li>
-              <span className="label">检测完成时间(起始)：</span>
-              <DateAndTime value={this.state.begin_timestamp} onChange={(val) => {
-                this.setState({ begin_timestamp: val})
-              }}
-              />
-            </li>
-            <li>
-              <span className="label">检测完成时间(结束)：</span>
-              <DateAndTime value={this.state.end_timestamp} onChange={(val) => {
-                this.setState({ end_timestamp: val})
-              }}
-              />
-            </li>
-            <li>
-              <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
-                  this.props.setAreaCode(this.state.area_code)
-                  this.getAll()
-                  this.props.setSearchInfo({
-                    type: 'warn',
-                    data: {
-                      proj_keyword: this.state.proj_keyword,
-                      point_keyword: this.state.point_keyword,
-                      area_code: this.state.area_code,
-                      warn_type: this.state.warn_type,
-                      confirm_res: this.state.confirm_res,
-                      begin_timestamp: this.state.begin_timestamp,
-                      end_timestamp: this.state.end_timestamp
+      <section className="warning-page page-view tab-page">
+        <Tabs type="editable-card" activeKey={this.state.activeKey} hideAdd
+          onChange={(key) => {
+            this.setState({
+              activeKey: key
+            })
+          }}
+          onEdit={(key) => {
+            const newTabs = this.state.tabsData.filter(v => v !== key);
+            this.setState({
+              tabsData: newTabs,
+              activeKey: 'warn'
+            })
+          }}
+        >
+          <TabPane tab="报警列表" key="warn" closable={false}>
+            <section className='tab-content'>
+              <header className="header">
+                <span />
+                <span>
+                  <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
+                    this.onDelete(this.state.selectedKeys)
+                  })}
+                  >
+                    <i className="iconfont icon-piliangshanchu1" />
+                    批量删除
+                  </Button>
+                  <Button className="import-btn header-btn" type="primary">
+                    <i className="iconfont icon-daoru" />
+                    导入
+                  </Button>
+                  <Button className="export-btn header-btn" type="primary">
+                    <i className="iconfont icon-export" />
+                    导出
+                  </Button>
+                  <Button className="add-btn header-btn" type="primary" onClick={throttle(1000, () => {
+                    this.setState({
+                      showDetail: true,
+                      type: 'add',
+                      detail: null
+                    })
+                  })}
+                  >
+                    <i className="iconfont icon-add1" />
+                    添加
+                  </Button> 
+                </span>
+              </header>
+              <section className="body">
+                <ul className="search-box">
+                  <li>
+                    <span className="label l-small">工程：</span>
+                    <Input
+                      value={this.state.proj_keyword}
+                      onChange={(e) => {
+                        this.setState({
+                          proj_keyword: e.target.value
+                        })
+                      }}
+                      allowClear
+                      placeholder="名称"
+                      onPressEnter={() => {
+                        this.getAll()
+                      }}
+                      style={{ width: 100 }}
+                    />
+                  </li>
+                  <li>
+                    <span className="label l-small">布点：</span>
+                    <Input
+                      value={this.state.point_keyword}
+                      onChange={(e) => {
+                        this.setState({
+                          point_keyword: e.target.value
+                        })
+                      }}
+                      allowClear
+                      placeholder="名称、标签"
+                      onPressEnter={() => {
+                        this.getAll()
+                      }}
+                      style={{ width: 120 }}
+                    />
+                  </li>
+                  
+                  <li>
+                    <span className="label l-small">区域：</span>
+                    <SelectArea width={320} area_code={this.state.area_code} visible onChange={({code}) => {
+                      this.setState({ area_code: code})
+                    }}
+                    />
+                  </li>
+                  <li>
+                    <span className="label l-large">报警类型：</span>
+                    <Select value={this.state.warn_type + ''} style={{width: 100}} onChange={(val) => {
+                      this.setState({ warn_type: +val})
+                    }}
+                    >
+                      {
+                        Object.keys(warningType).map((key) => {
+                          return <Option value={key + ''} key={key}>{+key === 1 ? '全部' : warningType[key]}</Option>
+                        })
+                      }
+                    </Select>
+                  </li>
+                  <li>
+                    <span className="label l-large">确认结果：</span>
+                    <Select value={this.state.confirm_res + ''} style={{width: 100}} onChange={(val) => {
+                      this.setState({ confirm_res: +val})
+                    }}
+                    >
+                      {
+                        Object.keys(confirmRes).map((key) => {
+                          return <Option value={key + ''} key={key}>{+key === 0 ? '全部' : confirmRes[key]}</Option>
+                        })
+                      }
+                    </Select>
+                  </li>
+                </ul>
+                <ul className="search-box" style={{borderTop: 'none'}}>
+                  <li>
+                    <span className="label">检测完成时间(起始)：</span>
+                    <DateAndTime value={this.state.begin_timestamp} onChange={(val) => {
+                      this.setState({ begin_timestamp: val})
+                    }}
+                    />
+                  </li>
+                  <li>
+                    <span className="label">检测完成时间(结束)：</span>
+                    <DateAndTime value={this.state.end_timestamp} onChange={(val) => {
+                      this.setState({ end_timestamp: val})
+                    }}
+                    />
+                  </li>
+                  <li>
+                    <Tooltip title="搜素">
+                      <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
+                        this.props.setAreaCode(this.state.area_code)
+                        this.getAll()
+                        this.props.setSearchInfo({
+                          type: 'warn',
+                          data: {
+                            proj_keyword: this.state.proj_keyword,
+                            point_keyword: this.state.point_keyword,
+                            area_code: this.state.area_code,
+                            warn_type: this.state.warn_type,
+                            confirm_res: this.state.confirm_res,
+                            begin_timestamp: this.state.begin_timestamp,
+                            end_timestamp: this.state.end_timestamp
+                          }
+                        });
+                      }}>
+                        <i className="iconfont icon-sousuo" />
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title="重置">
+                      <Button shape="circle" type="primary" onClick={throttle(1000, () => {
+                        const searchInfo = {
+                          proj_keyword: '',
+                          point_keyword: '',
+                          area_code: '',
+                          warn_type: '',
+                          confirm_res: '',
+                          begin_timestamp: '',
+                          end_timestamp: ''
+                        }
+                        this.setState(() => (searchInfo), this.getAll)
+                        this.props.setSearchInfo({
+                          type: 'warn',
+                          data: searchInfo
+                        });
+                      })}
+                      >
+                        <i className="iconfont icon-zhongzhi" />
+                      </Button>
+                    </Tooltip>
+                  </li>
+                </ul>
+                <Table
+                  dataSource={this.state.tableData}
+                  rowKey={r => r.warn_id}
+                  pagination={false}
+                  rowSelection={{
+                    onChange: (keys) => {
+                      this.setState({
+                        selectedKeys: keys
+                      })
                     }
-                  });
-                }}>
-                  <i className="iconfont icon-sousuo" />
-                </Button>
-              </Tooltip>
-              <Tooltip title="重置">
-                <Button shape="circle" type="primary" onClick={throttle(1000, () => {
-                  const searchInfo = {
-                    proj_keyword: '',
-                    point_keyword: '',
-                    area_code: '',
-                    warn_type: '',
-                    confirm_res: '',
-                    begin_timestamp: '',
-                    end_timestamp: ''
-                  }
-                  this.setState(() => (searchInfo), this.getAll)
-                  this.props.setSearchInfo({
-                    type: 'warn',
-                    data: searchInfo
-                  });
-                })}
+                  }}
                 >
-                  <i className="iconfont icon-zhongzhi" />
-                </Button>
-              </Tooltip>
-            </li>
-          </ul>
-          <Table
-            dataSource={this.state.tableData}
-            rowKey={r => r.warn_id}
-            pagination={false}
-            rowSelection={{
-              onChange: (keys) => {
-                this.setState({
-                  selectedKeys: keys
-                })
-              }
-            }}
-          >
-            <Table.Column title="工程" dataIndex="project_name" key="project_name" />
-            <Table.Column title="布点" dataIndex="point_name" key="point_name" />
-            <Table.Column title="报警类型" dataIndex="warn_type" key="warn_type"
-              render={(val, _) => (<span>{warningType[val]}</span>)}
-            />
-            <Table.Column title="探测时间" dataIndex="detect_timestamp" key="detect_timestamp"
-              render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
-            />
-            <Table.Column title="确认时间" dataIndex="confirm_timestamp" key="confirm_timestamp"
-              render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
-            />
-            <Table.Column title="确认用户" dataIndex="confirm_user_name" key="confirm_user_name" />
-            <Table.Column title="报警确认结果" dataIndex="confirm_res" key="confirm_res"
-              render={(val, _) => (<span>{confirmRes[val]}</span>)}
-            />
-            <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
-              render={(_, record) => (
-                <>
-                  <Tooltip title="修改">
-                    <i className="iconfont icon-xiugai" onClick={throttle(1000, () => {
-                      this.setState({
-                        showDetail: true,
-                        type: 'edit',
-                        detail: record
-                      })
-                    })} 
-                    />
-                  </Tooltip>
-                  <Tooltip title="检查">
-                    <i className="iconfont icon-chouchajiancha" onClick={throttle(1000, () => {
-                      this.setState({
-                        selectWarn: record,
-                        showInspect: true
-                      })
-                    })}
-                    />
-                  </Tooltip>
-                  <Tooltip title="删除">
-                    <i className="iconfont icon-shanchu" onClick={throttle(1000, () => this.onDelete([record.warn_id]))} />
-                  </Tooltip>
-                </>
-              )}
-            />
-          </Table>
-          <Pagination
-            defaultCurrent={1}
-            current={this.state.currentPage}
-            pageSize={this.state.pageSize}
-            showTotal={() => `总数 ${this.state.total} `}
-            total={this.state.total}
-            locale={{
-              items_per_page: '每页行数',
-            }}
-            showSizeChanger
-            onShowSizeChange={(currentPage, pageSize) => {
-              const searchInfo = {
-                currentPage: 1,
-                pageSize
-              }
-              this.setState(searchInfo, () => {
-                this.getAll()
-              });
-              this.props.setSearchInfo({
-                type: 'warn',
-                data: searchInfo
-              });
-            }}
-            onChange={(pageNumber) => {
-              const searchInfo = {
-                currentPage: pageNumber
-              }
-              this.setState(searchInfo, () => {
-                this.getAll()
-              });
-              this.props.setSearchInfo({
-                type: 'warn',
-                data: searchInfo
-              });
-            }}
-          />
-        </section>
-      
+                  <Table.Column title={() => (
+                    <section className='table-column-search'>
+                      <span>工程</span>
+                      <Tooltip title="查找工程">
+                        <i className='iconfont icon-sousuo' onClick={() => {
+                          this.setState((pre) => ({
+                            tabsData: [...new Set(pre.tabsData), 'project'],
+                            activeKey: 'project'
+                          }))
+                        }} />
+                      </Tooltip>
+                    </section>
+                  )} dataIndex="project_name" key="project_name" />
+                  <Table.Column title={
+                    () => (
+                      <section className='table-column-search'>
+                        <span>布点</span>
+                        <Tooltip title="查找布点">
+                          <i className='iconfont icon-sousuo' onClick={() => {
+                            this.setState((pre) => ({
+                              tabsData: [...new Set(pre.tabsData), 'point'],
+                              activeKey: 'point'
+                            }))
+                          }} />
+                        </Tooltip>
+                      </section>
+                    )
+                  } dataIndex="point_name" key="point_name" />
+                  <Table.Column title="报警类型" dataIndex="warn_type" key="warn_type"
+                    render={(val, _) => (<span>{warningType[val]}</span>)}
+                  />
+                  <Table.Column title="探测时间" dataIndex="detect_timestamp" key="detect_timestamp"
+                    render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
+                  />
+                  <Table.Column title="确认时间" dataIndex="confirm_timestamp" key="confirm_timestamp"
+                    render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
+                  />
+                  <Table.Column title="确认用户" dataIndex="confirm_user_name" key="confirm_user_name" />
+                  <Table.Column title="报警确认结果" dataIndex="confirm_res" key="confirm_res"
+                    render={(val, _) => (<span>{confirmRes[val]}</span>)}
+                  />
+                  <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
+                    render={(_, record) => (
+                      <>
+                        <Tooltip title="修改">
+                          <i className="iconfont icon-xiugai" onClick={throttle(1000, () => {
+                            this.setState({
+                              showDetail: true,
+                              type: 'edit',
+                              detail: record
+                            })
+                          })} 
+                          />
+                        </Tooltip>
+                        <Tooltip title="检查">
+                          <i className="iconfont icon-chouchajiancha" onClick={throttle(1000, () => {
+                            this.setState({
+                              selectWarn: record,
+                              showInspect: true
+                            })
+                          })}
+                          />
+                        </Tooltip>
+                        <Tooltip title="删除">
+                          <i className="iconfont icon-shanchu" onClick={throttle(1000, () => this.onDelete([record.warn_id]))} />
+                        </Tooltip>
+                      </>
+                    )}
+                  />
+                </Table>
+                <Pagination
+                  defaultCurrent={1}
+                  current={this.state.currentPage}
+                  pageSize={this.state.pageSize}
+                  showTotal={() => `总数 ${this.state.total} `}
+                  total={this.state.total}
+                  locale={{
+                    items_per_page: '每页行数',
+                  }}
+                  showSizeChanger
+                  onShowSizeChange={(currentPage, pageSize) => {
+                    const searchInfo = {
+                      currentPage: 1,
+                      pageSize
+                    }
+                    this.setState(searchInfo, () => {
+                      this.getAll()
+                    });
+                    this.props.setSearchInfo({
+                      type: 'warn',
+                      data: searchInfo
+                    });
+                  }}
+                  onChange={(pageNumber) => {
+                    const searchInfo = {
+                      currentPage: pageNumber
+                    }
+                    this.setState(searchInfo, () => {
+                      this.getAll()
+                    });
+                    this.props.setSearchInfo({
+                      type: 'warn',
+                      data: searchInfo
+                    });
+                  }}
+                />
+              </section>
+            </section>
+          </TabPane>
+          { this.state.tabsData.includes('project') &&
+            <TabPane tab="工程列表" key="project" closable={true}>
+              <ProjectPage showTab={true} />
+            </TabPane>
+          }
+          { this.state.tabsData.includes('point') &&
+            <TabPane tab="布点列表" key="point" closable={true}>
+              <PointPage showTab={true} />
+            </TabPane>
+          }
+        </Tabs>
+
         {/* 添加或者编辑 */}
         <WarningDetail
           visible={this.state.showDetail}
