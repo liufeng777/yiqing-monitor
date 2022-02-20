@@ -89,7 +89,7 @@ export const ProjectDetail = (props) => {
         <Form.Item label="工程编码" name="project_code"
           rules={[{ 
             validator(rule, value) {
-              const regx = /^(?![A-Z]+$)(?!\d+$)[0-9A-Z]{1,16}/;
+              const regx = /^(?![A-Z]+$)(?!\d+$)[0-9A-Z]{1,16}$/;
               if (value && !regx.test(value)) {
                 return Promise.reject('由大写英文+数字组成, 最多16字符')
               }
