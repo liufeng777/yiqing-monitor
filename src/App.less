@@ -20,6 +20,9 @@
         height: 100%;
         min-width: 960px;
         overflow-x: auto;
+        > div {
+          width: 100%;
+        }
         .table-column-search {
           display: flex;
           align-items: center;
@@ -33,31 +36,6 @@
           }
         }
       }
-    }
-  }
-}
-
-.tab-page {
-  height: 100%;
-  .header {
-    height: 40px !important;
-  }
-  .ant-tabs {
-    height: 100%;
-    margin-top: 16px;
-    .ant-tabs-content {
-      height: 100%;
-      .tab-content {
-        height: calc(100% - 6px);
-      }
-    }
-  }
-  .ant-tabs-top > .ant-tabs-nav {
-    margin: 0
-  }
-  .tab-content {
-    .header {
-      height: 40px;
     }
   }
 }

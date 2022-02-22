@@ -7,6 +7,7 @@ import { SelectArea } from '../../component/SelectArea';
 import { throttle } from 'throttle-debounce';
 import { getDateTime } from '../Card/DateAndTime';
 import './index.less';
+import CacheTags from '../../component/CacheTags';
 
 // redux
 import * as actions from '../../store/action';
@@ -43,9 +44,10 @@ class ProjectPage extends React.Component {
 
   render () {
     return (
-      <section className={this.props.showTab ? 'project-page tab-page' : "project-page page-view"}>
+      <section className={"project-page page-view"}>
+        <CacheTags />
         <header className="header">
-          {this.props.showTab ? <span/> : <span className="title">工程列表</span>}
+          <span/>
           <span>
             <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
               <i className="iconfont icon-daoru" />

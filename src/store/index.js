@@ -4,7 +4,9 @@ import { types } from './types';
 const initialState = {
   tokenInvalid: false,
   areaCode: +sessionStorage.getItem('areaCode') || 0,
-  areaPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}')
+  areaPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
+  cacheTages: [],
+  activeTag: ''
 };
 
 const reducer = (state = initialState, action) => {
@@ -23,6 +25,16 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         areaPoint: action.payload
+      }
+    case types.SET_CACHE_TAGS:
+      return {
+        ...state,
+        cacheTages: action.payload
+      }
+    case types.SWITCH_TAG:
+      return {
+        ...state,
+        activeTag: action.payload
       }
     default:
       return state;

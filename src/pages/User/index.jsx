@@ -7,6 +7,7 @@ import MD5 from 'crypto-js/md5';
 import { SelectArea } from '../../component/SelectArea';
 import { throttle } from 'throttle-debounce';
 import './index.less';
+import CacheTags from '../../component/CacheTags';
 
 // redux
 import * as actions from '../../store/action';
@@ -45,8 +46,9 @@ class UserPage extends React.Component {
   render () {
     return (
       <section className="admin-page page-view">
+        <CacheTags />
         <header className="header">
-          <span className="title">用户列表</span>
+          <span />
           <span>
             <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
               this.onDelete(this.state.selectedKeys)

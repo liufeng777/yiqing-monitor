@@ -70,8 +70,25 @@ class SiderNavbar extends React.Component{
           }
         </header>
         <section className="navbar-body">
-          {navbarArr.map((item) =>
-              <NavLink key={item.path} to={item.path} className="navlink">
+          {navbarArr.map((item, index) =>
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className="navlink"
+                onClick={() => {
+                  const isExist = this.props.cacheTages.find(v => v.path === item.path);
+                  if (!isExist && item.path !== '/home') {
+                    this.props.setCacheTags([
+                      ...this.props.cacheTages,
+                      {
+                        path: item.path,
+                        name: item.name
+                      }
+                    ]);
+                  }
+                  this.props.switchTag(item.path)
+                }}
+              >
                 {
                   this.state.open ? <>
                     <i className={`iconfont ${item.icon}`} />
@@ -122,6 +139,7 @@ class SiderNavbar extends React.Component{
 const mapStateToProps = (state) => {
   return {
     tokenInvalid: state.tokenInvalid,
+    cacheTages: state.cacheTages
   };
 };
 

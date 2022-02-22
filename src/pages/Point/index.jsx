@@ -7,6 +7,7 @@ import { SelectArea } from '../../component/SelectArea';
 import { throttle } from 'throttle-debounce';
 import { getDateTime } from '../Card/DateAndTime';
 import './index.less';
+import CacheTags from '../../component/CacheTags';
 
 // redux
 import * as actions from '../../store/action';
@@ -50,38 +51,41 @@ class PointPage extends React.Component {
 
   render () {
     return (
-      <section className={this.props.showTab ? 'point-page tab-page' : "point-page page-view"}>
-          <header className="header">
-            {this.props.showTab ? <span/> : <span className="title">{this.props.projId ? '' : '布点列表'}</span>}
-            <span>
-              <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
-                this.onDelete(this.state.selectedKeys)
-              })}
-              >
-                <i className="iconfont icon-piliangshanchu1" />
-                批量删除
-              </Button>
-              <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
-                <i className="iconfont icon-daoru" />
-                导入
-              </Button>
-              <Button className="export-btn header-btn" type="primary" onClick={throttle(1000, this.exportData)}>
-                <i className="iconfont icon-export" />
-                导出
-              </Button>
-              <Button className="add-btn header-btn" type="primary" onClick={throttle(1000, () => {
-                this.setState({
-                  showDetail: true,
-                  type: 'add',
-                  detail: null
-                })
-              })}
-              >
-                <i className="iconfont icon-add1" />
-                添加
-              </Button> 
-            </span>
-          </header>
+      <section className={"point-page page-view"}
+        style={{padding: this.props.hideTags ? '0' : '16px'}}
+      >
+        {!this.props.hideTags && <CacheTags />}
+        <header className="header">
+          <span/>
+          <span>
+            <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
+              this.onDelete(this.state.selectedKeys)
+            })}
+            >
+              <i className="iconfont icon-piliangshanchu1" />
+              批量删除
+            </Button>
+            <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
+              <i className="iconfont icon-daoru" />
+              导入
+            </Button>
+            <Button className="export-btn header-btn" type="primary" onClick={throttle(1000, this.exportData)}>
+              <i className="iconfont icon-export" />
+              导出
+            </Button>
+            <Button className="add-btn header-btn" type="primary" onClick={throttle(1000, () => {
+              this.setState({
+                showDetail: true,
+                type: 'add',
+                detail: null
+              })
+            })}
+            >
+              <i className="iconfont icon-add1" />
+              添加
+            </Button> 
+          </span>
+        </header>
         <section className="body">
           <ul className="search-box">
             <li>

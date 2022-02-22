@@ -16,78 +16,77 @@ class ProjectMap extends React.Component {
   };
 
   render () {
-      console.log('******', this.props.centerPoint)
-      return (
-        <section className="project-map-box">
-          <p className='project-title'>
-            <i className="iconfont icon-gongcheng" />
-            工程分布
-          </p>
-          <section id="project-map-container">
-          <Map
-            style={{height: '100%'}}
-            center={this.props.centerPoint || {lng: 108.55, lat: 34.32}
-            }
-            zoom={this.props.zoom}
-            enableScrollWheelZoom
-          >
-            {this.props.projects.map((item) => {
-              return <CustomOverlay
-                position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
-                key={item.project_id}
+    return (
+      <section className="project-map-box">
+        <p className='project-title'>
+          <i className="iconfont icon-gongcheng" />
+          工程分布
+        </p>
+        <section id="project-map-container">
+        <Map
+          style={{height: '100%'}}
+          center={this.props.centerPoint || {lng: 108.55, lat: 34.32}
+          }
+          zoom={this.props.zoom}
+          enableScrollWheelZoom
+        >
+          {this.props.projects.map((item) => {
+            return <CustomOverlay
+              position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
+              key={item.project_id}
+            >
+              <span
+                style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center'}}
+                onClick={() => {
+                  this.props.changeActiveProject(item)
+                  this.getPointByProject(item)
+                }}
               >
-                <span
-                  style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center'}}
-                  onClick={() => {
-                    this.props.changeActiveProject(item)
-                    this.getPointByProject(item)
-                  }}
-                >
-                  {this.getMarker(item)}
-                </span>
-              </CustomOverlay>
-            })}
-            <NavigationControl />
-            <ZoomControl />
-          </Map>
-        </section>
+                {this.getMarker(item)}
+              </span>
+            </CustomOverlay>
+          })}
+          <NavigationControl />
+          <ZoomControl />
+        </Map>
+      </section>
 
-        {/* 工程详情 */}
-        {
-          this.props.activeProject &&
-          <section className='project-info'>
-            <header className='info-header'>
-              <span className='info-name'>{this.props.activeProject.name}</span>
-              <i className='iconfont icon-guanbi1' onClick={() => {
-                this.props.changeActiveProject(null)
-              }} />
-            </header>
-            <ul className='info-body'>
-              <li style={{marginRight: 20}}>
-                <span>未处理报警(蚁情)数量：</span>
-                <span style={{fontSize: 20, fontWeight: 'bold', color: '#FF4D4F'}}>
-                  {this.props.activeProject.termite_wait_count}
-                </span>
-              </li>
-              <li>
-                <span>报警(蚁情)总数：</span>
-                <span style={{fontSize: 20, fontWeight: 'bold', color: '#FAAD14'}}>
-                  {this.props.activeProject.termite_count}
-                </span>
-              </li>
-            </ul>
-            <footer>
-              <Button type="link" style={{fontWeight: 'bold'}} onClick={() => {
-                this.props.history.push({
-                  pathname: `/point/map/${this.props.activeProject.project_id}`,
-                  state: { from : 'home' }
-                })
-              }}>查看布点（{this.state.points.length}）</Button>
-            </footer>
-          </section>
-        }
+      {/* 工程详情 */}
+      {
+        this.props.activeProject &&
+        <section className='project-info'>
+          <header className='info-header'>
+            <span className='info-name'>{this.props.activeProject.name}</span>
+            <i className='iconfont icon-guanbi1' onClick={() => {
+              this.props.changeActiveProject(null)
+            }} />
+          </header>
+          <ul className='info-body'>
+            <li style={{marginRight: 20}}>
+              <span>未处理报警(蚁情)数量：</span>
+              <span style={{fontSize: 20, fontWeight: 'bold', color: '#FF4D4F'}}>
+                {this.props.activeProject.termite_wait_count}
+              </span>
+            </li>
+            <li>
+              <span>报警(蚁情)总数：</span>
+              <span style={{fontSize: 20, fontWeight: 'bold', color: '#FAAD14'}}>
+                {this.props.activeProject.termite_count}
+              </span>
+            </li>
+          </ul>
+          <footer>
+            <Button type="link" style={{fontWeight: 'bold'}} onClick={() => {
+              this.props.history.push({
+                pathname: `/point/map/${this.props.activeProject.project_id}`,
+                state: { from : 'home' }
+              })
+            }}>查看布点（{this.state.points.length}）</Button>
+          </footer>
         </section>
-      )
+      }
+      </section>
+    )
   }
 
   // 根据工程获取布点

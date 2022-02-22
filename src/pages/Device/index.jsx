@@ -5,6 +5,7 @@ import { deviceType, deviceState } from '../../assets/js/constant';
 import { DeviceDetail } from './Detail';
 import { throttle } from 'throttle-debounce';
 import './index.less';
+import CacheTags from '../../component/CacheTags';
 
 // api
 import { deviceList, deviceBatchDelete, deviceAdd, deviceChange } from '../../api';
@@ -36,9 +37,10 @@ export default class DevicePage extends React.Component {
 
   render () {
     return (
-      <section className="admin-page page-view">
+      <section className="device-page page-view">
+        <CacheTags />
         <header className="header">
-          <span className="title">设备列表</span>
+          <span />
           <span>
             <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
               this.onDelete(this.state.selectedKeys)

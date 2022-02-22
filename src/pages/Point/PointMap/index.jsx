@@ -50,7 +50,7 @@ export default class PointMap extends React.Component {
             this.props.location.state?.from === 'home' ? 'map' : 'list'
           }>
             <TabPane tab="布点列表" key="list">
-              <PointPage projId={this.props.match.params.proId} projName={this.state.project?.name} />
+              <PointPage hideTags={true} projId={this.props.match.params.proId} projName={this.state.project?.name} />
             </TabPane>
             <TabPane tab="布点分布" key="map">
               <section className='point-map-body'>

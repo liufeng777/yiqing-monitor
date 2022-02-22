@@ -6,6 +6,7 @@ import { AdminDetail } from './Detail';
 import MD5 from 'crypto-js/md5';
 import { throttle } from 'throttle-debounce';
 import './index.less';
+import CacheTags from '../../component/CacheTags';
 
 // api
 import { adminList, adminDelete, adminAdd, adminChange } from '../../api';
@@ -32,8 +33,9 @@ export default class AdminPage extends React.Component {
   render () {
     return (
       <section className="admin-page page-view">
+        <CacheTags />
         <header className="header">
-          <span className="title">管理员列表</span>
+          <span />
           <span>
             <Button className="add-btn header-btn" type="primary" onClick={throttle(1000, () => {
               this.setState({
