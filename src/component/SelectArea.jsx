@@ -23,6 +23,12 @@ export const SelectArea = (props) => {
       // 初始化数据
       setInitCode('');
       let priCode = '';
+
+      if (props.area_code === 0) {
+        setCityCode('');
+        setCountyCode('');
+      }
+
       if (props.area_code || props.area_code === 0) {
         priCode = Math.floor(props.area_code / 10000) * 10000;
         setProvinceCode(priCode);

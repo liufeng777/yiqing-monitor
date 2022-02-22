@@ -37,8 +37,8 @@ class HomePage extends React.Component {
     super(props);
     this.state = {
       area_code: this.props.areaCode,
-      area_point: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
-      centerPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
+      area_point: this.props.areaPoint,
+      // centerPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
       zoom: 6,
       data: {},
       projects: [],
@@ -120,6 +120,7 @@ class HomePage extends React.Component {
                   this.getTopProjWarn();
                   this.getMapCenterAndZoom();
                   this.props.setAreaCode(this.state.area_code)
+                  this.props.setAreaPoint(this.state.area_point)
                 }}
                 >
                   <i className="iconfont icon-sousuo" />
@@ -128,9 +129,9 @@ class HomePage extends React.Component {
               <Tooltip title="重置">
                 <Button shape="circle" type="primary" onClick={() => {
                   this.setState(() => ({
-                    area_code: '',
-                    area_point: '',
-                    centerPoint: {lng: 108.55, lat: 34.32},
+                    area_code: 0,
+                    area_point: {lng: 108.55, lat: 34.32},
+                    // centerPoint: {lng: 108.55, lat: 34.32},
                     zoom: 6,
                     data: {},
                     projects: [],
@@ -141,6 +142,8 @@ class HomePage extends React.Component {
                     this.getStatistic()
                     this.getProjectsInMap()
                     this.getTopProjWarn()
+                    this.props.setAreaCode(0)
+                    this.props.setAreaPoint({lng: 108.55, lat: 34.32})
                   })
                 }}
                 >
@@ -214,7 +217,7 @@ class HomePage extends React.Component {
             <ProjectMap
               projects={this.state.projects}
               zoom={this.state.zoom}
-              centerPoint={this.state.centerPoint}
+              centerPoint={this.props.areaPoint}
               activeProject={this.state.activeProject}
               changeActiveProject={(item) => {
                 this.setState({
@@ -418,9 +421,9 @@ class HomePage extends React.Component {
 
   // 获取地图层级
   getMapCenterAndZoom = () => {
-    this.setState((preState) => ({
-      centerPoint: preState.area_point || preState.centerPoint
-    }))
+    // this.setState((preState) => ({
+    //   centerPoint: preState.area_point || preState.centerPoint
+    // }))
 
     if (!this.state.area_code) {
       this.setState({
@@ -459,6 +462,7 @@ class HomePage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    areaPoint: state.areaPoint
   };
 };
 

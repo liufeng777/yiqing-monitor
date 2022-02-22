@@ -38,6 +38,7 @@ class PointPage extends React.Component {
       device_code: '',
       device_type: '',
       area_code: this.props.areaCode,
+      area_point: this.props.areaPoint
     }
   };
 
@@ -139,8 +140,8 @@ class PointPage extends React.Component {
             </li>
             <li>
               <span className="label">区域：</span>
-              <SelectArea width={320} area_code={this.state.area_code} visible onChange={({code}) => {
-                this.setState({ area_code: code})
+              <SelectArea selectAll width={320} area_code={this.state.area_code} visible onChange={({code, point}) => {
+                this.setState({ area_code: code, area_point: point})
               }}
               />
             </li>
@@ -181,6 +182,7 @@ class PointPage extends React.Component {
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
                   this.props.setAreaCode(this.state.area_code)
+                  this.props.setAreaPoint(this.state.area_point)
                   this.getAll()
                 }}>
                   <i className="iconfont icon-sousuo" />
@@ -192,8 +194,10 @@ class PointPage extends React.Component {
                     proj_keyword: '',
                     point_keyword: '',
                     state: '',
-                    area_code: ''
+                    area_code: 0
                   }), this.getAll)
+                  this.props.setAreaCode(0)
+                  this.props.setAreaPoint({lng: 108.55, lat: 34.32})
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
@@ -447,6 +451,7 @@ class PointPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
+    areaPoint: state.areaPoint
   };
 };
 

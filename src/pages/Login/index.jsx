@@ -40,6 +40,9 @@ class LoginPage extends React.Component {
                 sessionStorage.setItem('areaPoint', JSON.stringify({
                   lng: +res.record?.area_lng, lat: +res.record?.area_lat
                 }));
+                this.props.setAreaPoint({
+                  lng: +res.record?.area_lng, lat: +res.record?.area_lat
+                })
               }
               sessionStorage.setItem('adminName', res.record?.admin_name);
               this.props.setTokenInvalid(false)

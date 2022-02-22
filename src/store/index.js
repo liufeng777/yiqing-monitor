@@ -3,7 +3,8 @@ import { types } from './types';
 
 const initialState = {
   tokenInvalid: false,
-  areaCode: +sessionStorage.getItem('areaCode') || 0
+  areaCode: +sessionStorage.getItem('areaCode') || 0,
+  areaPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}')
 };
 
 const reducer = (state = initialState, action) => {
@@ -17,6 +18,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         areaCode: action.payload
+      }
+    case types.SET_AREA_POINT:
+      return {
+        ...state,
+        areaPoint: action.payload
       }
     default:
       return state;

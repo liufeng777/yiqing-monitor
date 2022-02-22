@@ -16,6 +16,7 @@ class ProjectMap extends React.Component {
   };
 
   render () {
+      console.log('******', this.props.centerPoint)
       return (
         <section className="project-map-box">
           <p className='project-title'>

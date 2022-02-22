@@ -13,3 +13,10 @@ export const setAreaCode = (val) => {
     payload: val,
   };
 };
+
+export const setAreaPoint = (val) => {
+  return {
+    type: types.SET_AREA_POINT,
+    payload: val,
+  };
+};
