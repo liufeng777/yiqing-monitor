@@ -1,5 +1,6 @@
 import React from 'react';
-import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Route, Redirect } from 'react-router-dom';
+import { CacheSwitch as Switch, CacheRoute } from 'react-router-cache-route';
 import { Provider } from 'react-redux';
 import { storeInstance } from './store/index';
 
@@ -61,17 +62,17 @@ export default class App extends React.Component {
                           this.setState({isLogin})
                         }}/>}
                        />
-                        <Route path="/project" exact component={ProjectPage} />
-                        <Route path="/project/user/:proId" exact component={ProjectUserPage} />
-                        <Route path="/point/map/:proId" component={PointMap} />
-                        <Route path="/point" component={PointPage} />
-                        <Route path="/device" component={DevicePage} />
-                        <Route path="/card" component={CardPage} />
-                        <Route path="/detect" component={DetectPage} />
-                        <Route path="/inspect" component={InspectPage} />
-                        <Route path="/warning" component={WarningPage} />
-                        <Route path="/admin" component={AdminPage} />
-                        <Route path="/user" component={UserPage} />
+                        <CacheRoute path="/project" exact component={ProjectPage} />
+                        <CacheRoute path="/project/user/:proId" exact component={ProjectUserPage} />
+                        <CacheRoute path="/point/map/:proId" component={PointMap} />
+                        <CacheRoute path="/point" component={PointPage} />
+                        <CacheRoute path="/device" component={DevicePage} />
+                        <CacheRoute path="/card" component={CardPage} />
+                        <CacheRoute path="/detect" component={DetectPage} />
+                        <CacheRoute path="/inspect" component={InspectPage} />
+                        <CacheRoute path="/warning" component={WarningPage} />
+                        <CacheRoute path="/admin" component={AdminPage} />
+                        <CacheRoute path="/user" component={UserPage} />
                         <Redirect to="/home" />
                       </Switch>
                     </section>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, Button, Tag } from 'antd';
 import { SelectArea } from '../../component/SelectArea';
-import { overviewStatistic, projectMap, warningList, overviewTopProjWarn } from '../../api';
+import { overviewStatistic, projectMap, overviewTopProjWarn } from '../../api';
 import { warningType, barOption, lineOption } from '../../assets/js/constant';
 import { Header } from '../../component/Header';
 import { EchartSearch } from './EchartSearch';
@@ -38,7 +38,6 @@ class HomePage extends React.Component {
     this.state = {
       area_code: this.props.areaCode,
       area_point: this.props.areaPoint,
-      // centerPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
       zoom: 6,
       data: {},
       projects: [],
@@ -131,7 +130,6 @@ class HomePage extends React.Component {
                   this.setState(() => ({
                     area_code: 0,
                     area_point: {lng: 108.55, lat: 34.32},
-                    // centerPoint: {lng: 108.55, lat: 34.32},
                     zoom: 6,
                     data: {},
                     projects: [],
@@ -421,10 +419,6 @@ class HomePage extends React.Component {
 
   // 获取地图层级
   getMapCenterAndZoom = () => {
-    // this.setState((preState) => ({
-    //   centerPoint: preState.area_point || preState.centerPoint
-    // }))
-
     if (!this.state.area_code) {
       this.setState({
         zoom: 6

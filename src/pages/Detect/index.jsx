@@ -171,8 +171,6 @@ class DetectPage extends React.Component {
             <li>
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={() => {
-                  this.props.setAreaCode(this.state.area_code);
-                  this.props.setAreaPoint(this.state.area_point)
                   this.getAll()
                 }}>
                   <i className="iconfont icon-sousuo" />
@@ -190,8 +188,6 @@ class DetectPage extends React.Component {
                     end_timestamp: ''
                   }
                   this.setState(() => (searchInfo), this.getAll);
-                  this.props.setAreaCode(0)
-                  this.props.setAreaPoint({lng: 108.55, lat: 34.32})
                 })}
                 >
                   <i className="iconfont icon-zhongzhi" />
