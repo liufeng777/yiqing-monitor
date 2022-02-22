@@ -76,10 +76,10 @@ class SiderNavbar extends React.Component{
                 to={item.path}
                 className="navlink"
                 onClick={() => {
-                  const isExist = this.props.cacheTages.find(v => v.path === item.path);
+                  const isExist = this.props.cacheTags.find(v => v.path === item.path);
                   if (!isExist && item.path !== '/home') {
                     this.props.setCacheTags([
-                      ...this.props.cacheTages,
+                      ...this.props.cacheTags,
                       {
                         path: item.path,
                         name: item.name
@@ -139,7 +139,7 @@ class SiderNavbar extends React.Component{
 const mapStateToProps = (state) => {
   return {
     tokenInvalid: state.tokenInvalid,
-    cacheTages: state.cacheTages
+    cacheTags: state.cacheTags
   };
 };
 

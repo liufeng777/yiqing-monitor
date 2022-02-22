@@ -350,7 +350,8 @@ class ProjectPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
-    areaPoint: state.areaPoint
+    areaPoint: state.areaPoint,
+    cacheTags: state.cacheTags
   };
 };
 

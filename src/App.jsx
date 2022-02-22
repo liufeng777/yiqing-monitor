@@ -62,9 +62,9 @@ export default class App extends React.Component {
                           this.setState({isLogin})
                         }}/>}
                        />
+                        <Route path="/project/user/:proId" exact component={ProjectUserPage} />
+                        <Route path="/point/map/:proId" component={PointMap} />
                         <CacheRoute path="/project" exact component={ProjectPage} />
-                        <CacheRoute path="/project/user/:proId" exact component={ProjectUserPage} />
-                        <CacheRoute path="/point/map/:proId" component={PointMap} />
                         <CacheRoute path="/point" component={PointPage} />
                         <CacheRoute path="/device" component={DevicePage} />
                         <CacheRoute path="/card" component={CardPage} />

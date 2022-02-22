@@ -5,7 +5,7 @@ const initialState = {
   tokenInvalid: false,
   areaCode: +sessionStorage.getItem('areaCode') || 0,
   areaPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
-  cacheTages: [],
+  cacheTags: [],
   activeTag: ''
 };
 
@@ -29,7 +29,7 @@ const reducer = (state = initialState, action) => {
     case types.SET_CACHE_TAGS:
       return {
         ...state,
-        cacheTages: action.payload
+        cacheTags: action.payload
       }
     case types.SWITCH_TAG:
       return {

@@ -64,6 +64,7 @@
     "react-redux": "^7.2.5",
     "react-refresh": "^0.8.3",
     "react-router": "^5.0.1",
+    "react-router-cache-route": "^1.12.5",
     "react-router-dom": "^5.0.1",
     "redux": "^4.1.1",
     "resolve": "1.18.1",
