@@ -50,6 +50,15 @@ class WarningPage extends React.Component {
     this.getAll();
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (!this.props.cacheTags.find(v => v.path === '/warning')) {
+      console.log('nextProps.areaCode', nextProps.areaCode)
+      this.setState(() => ({
+        area_code: nextProps.areaCode
+      }), this.getAll)
+    }
+  }
+
   render () {
     return (
       <section className="warning-page page-view">
@@ -371,7 +380,8 @@ class WarningPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
-    areaPoint: state.areaPoint
+    areaPoint: state.areaPoint,
+    cacheTags: state.cacheTags
   };
 };
 

@@ -48,6 +48,14 @@ class DetectPage extends React.Component {
     this.getAll();
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (!this.props.cacheTags.find(v => v.path === '/detect')) {
+      this.setState(() => ({
+        area_code: nextProps.areaCode
+      }), this.getAll)
+    }
+  }
+
   render () {
     return (
       <section className="detect-page page-view">
@@ -347,7 +355,8 @@ class DetectPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
-    areaPoint: state.areaPoint
+    areaPoint: state.areaPoint,
+    cacheTags: state.cacheTags
   };
 };
 

@@ -43,6 +43,14 @@ class UserPage extends React.Component {
     this.getAll();
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (!this.props.cacheTags.find(v => v.path === '/user')) {
+      this.setState(() => ({
+        area_code: nextProps.areaCode
+      }), this.getAll)
+    }
+  }
+
   render () {
     return (
       <section className="admin-page page-view">
@@ -280,7 +288,8 @@ class UserPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
-    areaPoint: state.areaPoint
+    areaPoint: state.areaPoint,
+    cacheTags: state.cacheTags
   };
 };
 

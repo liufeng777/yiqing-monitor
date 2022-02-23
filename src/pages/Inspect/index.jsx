@@ -48,6 +48,14 @@ class InspectPage extends React.Component {
     this.getAll();
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (!this.props.cacheTags.find(v => v.path === '/inspect')) {
+      this.setState(() => ({
+        area_code: nextProps.areaCode
+      }), this.getAll)
+    }
+  }
+
   render () {
     return (
       <section className="inspect-page page-view">
@@ -378,7 +386,8 @@ class InspectPage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
-    areaPoint: state.areaPoint
+    areaPoint: state.areaPoint,
+    cacheTags: state.cacheTags
   };
 };
 

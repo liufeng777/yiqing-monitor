@@ -42,6 +42,14 @@ class ProjectPage extends React.Component {
     this.getAll();
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (!this.props.cacheTags.find(v => v.path === '/project')) {
+      this.setState(() => ({
+        area_code: nextProps.areaCode
+      }), this.getAll)
+    }
+  }
+
   render () {
     return (
       <section className={"project-page page-view"}>
