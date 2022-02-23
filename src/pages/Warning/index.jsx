@@ -52,7 +52,6 @@ class WarningPage extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (!this.props.cacheTags.find(v => v.path === '/warning')) {
-      console.log('nextProps.areaCode', nextProps.areaCode)
       this.setState(() => ({
         area_code: nextProps.areaCode
       }), this.getAll)

@@ -60,6 +60,12 @@ class SiderNavbar extends React.Component{
     }
   }
 
+  componentDidMount () {
+    if (!this.props.cacheTags.length) {
+      this.props.history.push('/home')
+    }
+  }
+
   render () {
     return (
       <section className="navbar-box" style={{width: `${this.state.open ? '152px' : '50px'}`}}>
