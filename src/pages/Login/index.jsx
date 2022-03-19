@@ -45,6 +45,7 @@ class LoginPage extends React.Component {
                 })
               }
               sessionStorage.setItem('adminName', res.record?.admin_name);
+              sessionStorage.setItem('adminRole', res.record?.role);
               this.props.setTokenInvalid(false)
               this.props.history.push('/home')
               this.props.onSubmit(true);

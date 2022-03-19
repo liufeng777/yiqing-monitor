@@ -59,12 +59,13 @@ class WarningPage extends React.Component {
   }
 
   render () {
+    const adminRole = +sessionStorage.getItem('adminRole');
     return (
       <section className="warning-page page-view">
         <CacheTags />
         <header className="header">
           <span />
-          <span>
+          {adminRole > 1 &&<span>
             <Button className="add-btn header-btn" type="primary" disabled={!this.state.selectedKeys.length} onClick={throttle(1000, () => {
               this.onDelete(this.state.selectedKeys)
             })}
@@ -91,7 +92,7 @@ class WarningPage extends React.Component {
               <i className="iconfont icon-add1" />
               添加
             </Button> 
-          </span>
+          </span>}
         </header>
         <section className="body">
           <ul className="search-box">
@@ -235,7 +236,7 @@ class WarningPage extends React.Component {
             <Table.Column title="报警确认结果" dataIndex="confirm_res" key="confirm_res"
               render={(val, _) => (<span>{confirmRes[val]}</span>)}
             />
-            <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
+            {adminRole > 1 && <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
               render={(_, record) => (
                 <>
                   <Tooltip title="修改">
@@ -262,7 +263,7 @@ class WarningPage extends React.Component {
                   </Tooltip>
                 </>
               )}
-            />
+            />}
           </Table>
           <Pagination
             defaultCurrent={1}

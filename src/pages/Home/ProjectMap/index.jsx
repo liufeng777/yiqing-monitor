@@ -16,6 +16,8 @@ class ProjectMap extends React.Component {
   };
 
   render () {
+    const adminRole = +sessionStorage.getItem('adminRole');
+
     return (
       <section className="project-map-box">
         <p className='project-title'>
@@ -75,14 +77,15 @@ class ProjectMap extends React.Component {
               </span>
             </li>
           </ul>
-          <footer>
-            <Button type="link" style={{fontWeight: 'bold'}} onClick={() => {
-              this.props.history.push({
-                pathname: `/point/map/${this.props.activeProject.project_id}`,
-                state: { from : 'home' }
-              })
-            }}>查看布点（{this.state.points.length}）</Button>
-          </footer>
+          { adminRole > 1 && <footer>
+              <Button type="link" style={{fontWeight: 'bold'}} onClick={() => {
+                this.props.history.push({
+                  pathname: `/point/map/${this.props.activeProject.project_id}`,
+                  state: { from : 'home' }
+                })
+              }}>查看布点（{this.state.points.length}）</Button>
+            </footer>
+          }
         </section>
       }
       </section>

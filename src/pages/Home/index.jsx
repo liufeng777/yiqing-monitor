@@ -95,6 +95,8 @@ class HomePage extends React.Component {
       bgColor: 'processing'
     }]
 
+    const adminRole = +sessionStorage.getItem('adminRole');
+
     return (
       <section className="home-page">
         <section className="home-top">
@@ -167,6 +169,7 @@ class HomePage extends React.Component {
                     <li key={index}>
                       <span className="type-name">{item.title}：</span>
                       <Tag color={item.bgColor} onClick={() => {
+                        if (adminRole === 1) return;
                         this.props.history.push(item.path);
                       }}>
                         {item.count}
@@ -235,6 +238,7 @@ class HomePage extends React.Component {
                       <section className='right-data'>
                         <span className="type-name">{item.title}：</span>
                         <Tag color={item.bgColor} onClick={() => {
+                            if (adminRole === 1) return;
                             this.props.history.push(item.path);
                           }}>
                           {item.count}

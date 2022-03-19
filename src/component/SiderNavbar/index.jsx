@@ -13,43 +13,53 @@ import './index.less';
 const navbarArr = [{
   path: '/home',
   name: '首页',
-  icon: 'icon-yemian-copy-copy'
+  icon: 'icon-yemian-copy-copy',
+  access: 1
 }, {
   path: '/project',
   name: '工程',
-  icon: 'icon-gongcheng'
+  icon: 'icon-gongcheng',
+  access: 1
 }, {
   path: '/point',
   name: '布点',
-  icon: 'icon-f-location'
+  icon: 'icon-f-location',
+  access: 2
 }, {
   path: '/device',
   name: '设备',
-  icon: 'icon-shebei'
+  icon: 'icon-shebei',
+  access: 2
 }, {
-    path: '/card',
-    name: '通讯卡',
-    icon: 'icon-tongxunka-32'
+  path: '/card',
+  name: '通讯卡',
+  icon: 'icon-tongxunka-32',
+  access: 2
 }, {
   path: '/detect',
   name: '探测',
-  icon: 'icon-tance'
+  icon: 'icon-tance',
+  access: 2
 }, {
   path: '/inspect',
   name: '检查',
-  icon: 'icon-jianchajieguo'
+  icon: 'icon-jianchajieguo',
+  access: 2
 }, {
   path: '/warning',
   name: '报警',
-  icon: 'icon-jinggao'
+  icon: 'icon-jinggao',
+  access: 1
 }, {
   path: '/admin',
   name: '管理员',
-  icon: 'icon-guanliyuan1'
+  icon: 'icon-guanliyuan1',
+  access: 2
 }, {
   path: '/user',
   name: '用户',
-  icon: 'icon-yonghu'
+  icon: 'icon-yonghu',
+  access: 2
 }]
 
 class SiderNavbar extends React.Component{
@@ -67,6 +77,7 @@ class SiderNavbar extends React.Component{
   }
 
   render () {
+    const adminRole = sessionStorage.getItem('adminRole');
     return (
       <section className="navbar-box" style={{width: `${this.state.open ? '152px' : '50px'}`}}>
         <header className="navbar-header">
@@ -77,7 +88,8 @@ class SiderNavbar extends React.Component{
         </header>
         <section className="navbar-body">
           {navbarArr.map((item, index) =>
-              <NavLink
+            {return +adminRole >= item.access ?
+            <NavLink
                 key={item.path}
                 to={item.path}
                 className="navlink"
@@ -104,7 +116,9 @@ class SiderNavbar extends React.Component{
                     <i className={`iconfont ${item.icon}`} />
                   </Tooltip>
                 }
-              </NavLink>)
+            </NavLink>
+            : <></>
+            })
           }
         </section>
         <i 

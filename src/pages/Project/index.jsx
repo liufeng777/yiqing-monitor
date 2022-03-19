@@ -51,12 +51,14 @@ class ProjectPage extends React.Component {
   }
 
   render () {
+    const adminRole = +sessionStorage.getItem('adminRole');
+
     return (
       <section className={"project-page page-view"}>
         <CacheTags />
         <header className="header">
           <span/>
-          <span>
+          {adminRole > 1 && <span>
             <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
               <i className="iconfont icon-daoru" />
               导入
@@ -76,7 +78,7 @@ class ProjectPage extends React.Component {
               <i className="iconfont icon-add1" />
               添加
             </Button> 
-          </span>
+          </span>}
         </header>
         <section className="body">
           <ul className="search-box">
@@ -180,7 +182,7 @@ class ProjectPage extends React.Component {
             </Table.ColumnGroup>
             <Table.Column title="开工日期" dataIndex="build_timestamp" key="build_timestamp"
               render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}/>
-            <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
+            {adminRole > 1 && <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
               render={(_, record) => (
                 <>
                   <Tooltip title="修改">
@@ -207,7 +209,7 @@ class ProjectPage extends React.Component {
                   </Tooltip>
                 </>
               )}
-            />
+            />}
           </Table>
           <Pagination
             defaultCurrent={this.state.currentPage}
