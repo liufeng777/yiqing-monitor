@@ -133,6 +133,18 @@ export const PointDetail = (props) => {
             }
           </Select>
         </Form.Item>
+        {
+          props.detail &&
+          <Form.Item label="设备编码" name="device_code">
+            <Input maxLength={16} value={detail.device_code} onChange={(e) => {
+              setDetail({
+                ...detail,
+                device_code: e.target.value
+              })
+            }}
+            />
+          </Form.Item>
+        }
         <Form.Item label="状态" name="state">
           <Select value={detail.state + ''} onChange={(val) => {
             setDetail({

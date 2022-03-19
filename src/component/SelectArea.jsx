@@ -146,7 +146,7 @@ export const SelectArea = (props) => {
       </Select>
 
       {/* 区 */}
-      <Select value={countyCode + ''} placeholder="区" style={{marginRight: 10, width: 'calc((100% - 20px) / 3)'}}
+      <Select value={countyCode + ''} placeholder="区" style={{width: 'calc((100% - 20px) / 3)'}}
         onChange={async (val) => {
           setInitCode(+val);
           setCountyCode(+val);

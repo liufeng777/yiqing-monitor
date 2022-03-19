@@ -26,7 +26,7 @@ export const DeviceDetail = (props) => {
     ...detail,
     state: detail.state + '',
     type: detail.type + '',
-    card_id: detail.card_id + ''
+    card_id: detail.card_id ? detail.card_id + '' : ''
   }
   form.setFieldsValue(initialValues)
 
@@ -108,10 +108,7 @@ export const DeviceDetail = (props) => {
             }
           </Select>
         </Form.Item>
-        <Form.Item label="通讯卡" name="card_id"
-          rules={[{ required: true, message: '请选择通讯卡' }]}
-        >
-
+        <Form.Item label="通讯卡" name="card_id">
           <Select value={detail.card_id + ''}
             onChange={(val) => {
               setDetail({

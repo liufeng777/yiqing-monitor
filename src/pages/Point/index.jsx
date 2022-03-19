@@ -293,6 +293,7 @@ class PointPage extends React.Component {
                           name: record.name,
                           tag: record.tag,
                           state: record.state,
+                          device_code: record.device_code
                         }
                       })
                     })} 
