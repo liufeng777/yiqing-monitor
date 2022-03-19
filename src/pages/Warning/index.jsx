@@ -168,17 +168,17 @@ class WarningPage extends React.Component {
           <ul className="search-box" style={{borderTop: 'none'}}>
             <li>
               <span className="label">检测完成时间(起始)：</span>
-              <DateAndTime value={this.state.begin_timestamp} onChange={(val) => {
+              <span><DateAndTime value={this.state.begin_timestamp} onChange={(val) => {
                 this.setState({ begin_timestamp: val})
               }}
-              />
+              /></span>
             </li>
             <li>
               <span className="label">检测完成时间(结束)：</span>
-              <DateAndTime value={this.state.end_timestamp} onChange={(val) => {
+              <span><DateAndTime value={this.state.end_timestamp} onChange={(val) => {
                 this.setState({ end_timestamp: val})
               }}
-              />
+              /></span>
             </li>
             <li>
               <Tooltip title="搜素">

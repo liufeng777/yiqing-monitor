@@ -10,8 +10,8 @@ export const DateAndTime = (props) => {
   const [date, time] = getDateTime(props.value)
 
   return (
-    <section className="date-and-time-box">
-      <DatePicker locale={locale} style={{marginRight: 10}}
+    <section className="date-and-time-box" style={{width: '100%'}}>
+      <DatePicker locale={locale} style={{marginRight: 10, width: '50%'}}
         value={props.value ? moment(date, dateFormat) : ''}
         format={dateFormat}
         onChange={(moment, val) => {
@@ -20,6 +20,7 @@ export const DateAndTime = (props) => {
         }}
       />
       <TimePicker locale={locale}
+        style={{width: 'calc(50% - 10px)'}}
         value={props.value ? moment(time, timeFormat) : ''}
         format={timeFormat}
         onChange={(moment, val) => {
