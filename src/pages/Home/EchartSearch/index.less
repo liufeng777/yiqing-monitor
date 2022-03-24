@@ -1,4 +1,18 @@
 .echart-search {
   display: flex;
   justify-content: space-around;
+  margin-bottom: 12px;
+  .ant-radio-button-wrapper {
+    color: #fff;
+    background: #A2A2A2;
+    padding: 0 58px;
+  }
+  .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    color: #fff;
+    background: #736758;
+    border-color: #fff;
+  }
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+    display: none;
+  }
 }

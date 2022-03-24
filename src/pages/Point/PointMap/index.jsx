@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Descriptions, Tabs } from 'antd';
 import { pointListInMap, projectGet, pointGet } from '../../../api';
 import { getDateTime } from '../../Card/DateAndTime';
-import { inspectResult, measureType, warnType } from '../../../assets/js/constant';
+import { inspectResult, measureType, warnType, styleJson } from '../../../assets/js/constant';
 import PointPage from '../index';
 import './index.less';
 
@@ -61,7 +61,6 @@ export default class PointMap extends React.Component {
                     zoom={18}
                     enableScrollWheelZoom
                   >
-                  {/* 布点 */}
                   {this.state.points.map((item) => {
                     return <CustomOverlay
                         position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
@@ -73,9 +72,13 @@ export default class PointMap extends React.Component {
                             this.getPointInfo(item.point_id)
                           }}
                         >
-                        <i className="iconfont icon-f-location" style={{
-                          color: this.state.activePoint?.point_id === item.point_id ? '#52c41a' : '#389e0d',
-                          fontSize: this.state.activePoint?.point_id === item.point_id ? 50 : 30
+                        <span style={{
+                          display: 'inline-block',
+                          width: 15,
+                          height: 15,
+                          borderRadius: '50%',
+                          backgroundColor: '#aff891',
+                          boxShadow: `0 0 8px 8px #389e0d`
                         }} />
                         </span>
                     </CustomOverlay>

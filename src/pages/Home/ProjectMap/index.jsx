@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from  'react-router-dom'
 import { Button } from 'antd';
 import { pointListInMap } from '../../../api';
+import { styleJson } from '../../../assets/js/constant';
 import './index.less';
 
 // 地图
@@ -20,13 +21,10 @@ class ProjectMap extends React.Component {
 
     return (
       <section className="project-map-box">
-        <p className='project-title'>
-          <i className="iconfont icon-gongcheng" />
-          工程分布
-        </p>
         <section id="project-map-container">
         <Map
           style={{height: '100%'}}
+          mapStyleV2={{ styleJson }}
           center={this.props.centerPoint || {lng: 108.55, lat: 34.32}
           }
           zoom={this.props.zoom}
@@ -106,17 +104,27 @@ class ProjectMap extends React.Component {
 
   // 获取marker颜色
   getMarker = (project) => {
-    let color = '';
+    let bgColor = '';
+    let shadowColor = '';
     if (project.termite_wait_count > 0) {
-      color = '#FF4D4F'
+      bgColor = '#FFA3AA';
+      shadowColor = '#D42626'
     } else if (project.termite_count > 0) {
-      color = '#FAAD14'
+      bgColor = '#fdedc9';
+      shadowColor = '#fbb20e';
     } else {
-      color = '#52C41A'
+      bgColor = '#aff2fe';
+      shadowColor = '#09a0b9'
     }
 
-    return <i className="iconfont icon-gongcheng"
-      style={{color, fontSize: this.props.activeProject?.project_id === project?.project_id ? 50 : 30 }} />
+    return <span style={{
+      display: 'inline-block',
+      width: 15,
+      height: 15,
+      borderRadius: '50%',
+      backgroundColor: bgColor,
+      boxShadow: `0 0 8px 8px ${shadowColor}`
+    }} />
   }
 }
 

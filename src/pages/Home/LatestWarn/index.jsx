@@ -8,7 +8,7 @@ export const LatestWarn = (props) => {
   return (
     <section className="latest-warn">
       <p className='table-title'>
-        <i className="iconfont icon-biaoge2" />
+        <i className="iconfont icon-huanyanse-12" />
         <span>最新蚁情报警</span>
       </p>
       <Table
@@ -16,6 +16,7 @@ export const LatestWarn = (props) => {
         height={200}
         dataSource={props.data}
         rowKey={r => r.warn_id}
+        rowClassName={(r, i) => i % 2 ? 'even-line' : 'odd-line'}
         pagination={false}
         size="small"
         scroll={{y: 200, x: 600}}

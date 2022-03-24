@@ -6,7 +6,7 @@ export const WarnProjectRank = (props) => {
   return (
     <section className="warn-project-rank">
       <p className='table-title'>
-        <i className="iconfont icon-biaoge2" />
+        <i className="iconfont icon-huanyanse-12" />
         <span>蚁情报警工程排行</span>
       </p>
       <Table
@@ -14,6 +14,7 @@ export const WarnProjectRank = (props) => {
         height={200}
         dataSource={props.data}
         rowKey={r => r.project_id}
+        rowClassName={(r, i) => i % 2 ? 'even-line' : 'odd-line'}
         pagination={false}
         size="small"
         scroll={{y: 200, x: 400}}

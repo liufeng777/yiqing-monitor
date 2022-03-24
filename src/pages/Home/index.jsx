@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Button, Tag } from 'antd';
+import { Tooltip } from 'antd';
 import { SelectArea } from '../../component/SelectArea';
 import { overviewStatistic, projectMap, overviewTopProjWarn } from '../../api';
 import { warningType, barOption, lineOption } from '../../assets/js/constant';
@@ -66,13 +66,13 @@ class HomePage extends React.Component {
       count: this.state.data.project_count,
       title: '工程',
       path: '/project',
-      bgColor: 'processing'
+      bgColor: '#01B4D2'
     }, {
       icon: 'icon-f-location',
       count: this.state.data.point_count,
       title: '布点',
       path: '/point',
-      bgColor: 'processing'
+      bgColor: '#01B4D2'
     }]
 
     const rightDataArr = [{
@@ -80,32 +80,27 @@ class HomePage extends React.Component {
       count: this.getWarnCount(this.state.data.warns_count),
       title: '报警',
       path: '/warning',
-      bgColor: 'error'
+      bgColor: '#EE6666'
     }, {
       icon: 'icon-tance',
       count: this.state.data.detect_count,
       title: '探测',
       path: '/detect',
-      bgColor: 'processing'
-    }, {
-      icon: 'icon-jianchajieguo',
-      count: this.state.data.inspect_count,
-      title: '检查',
-      path: '/inspect',
-      bgColor: 'processing'
+      bgColor: '#01B4D2'
     }]
 
     const adminRole = +sessionStorage.getItem('adminRole');
 
     return (
       <section className="home-page">
+        <div className='test'></div>
         <section className="home-top">
           {/* 搜索 */}
-          <section className="search-box">
+          <section className="home-top-item search-box">
             <section>
               <SelectArea
                 selectAll
-                width={330}
+                width={280}
                 area_code={this.state.area_code}
                 visible
                 onChange={({code, point}) => {
@@ -115,7 +110,7 @@ class HomePage extends React.Component {
             </section>
             <section>
               <Tooltip title="搜素">
-                <Button shape="circle" type="primary" style={{margin: '0px 10px'}} onClick={() => {
+                <section className='search-btn' style={{margin: '0px 10px'}} onClick={() => {
                   this.getStatistic()
                   this.getProjectsInMap()
                   this.getTopProjWarn();
@@ -125,10 +120,10 @@ class HomePage extends React.Component {
                 }}
                 >
                   <i className="iconfont icon-sousuo" />
-                </Button>
+                </section>
               </Tooltip>
               <Tooltip title="重置">
-                <Button shape="circle" type="primary" onClick={() => {
+                <section className='search-btn' onClick={() => {
                   this.setState(() => ({
                     area_code: 0,
                     area_point: {lng: 108.55, lat: 34.32},
@@ -148,13 +143,14 @@ class HomePage extends React.Component {
                 }}
                 >
                   <i className="iconfont icon-zhongzhi" />
-                </Button>
+                </section>
               </Tooltip>
             </section>
           </section>
-          <section className="home-title">蚁情监测平台</section>
+          <section className="home-top-item home-title" />
           {/* 登录信息 */}
-          <section className="login-info">
+          <section className="home-top-item login-info">
+            <span style={{marginRight: 40}}>检查数：{this.state.data.inspect_count}</span>
             <Header onSubmit={(val) => this.props.changeLoginInfo(val)} />
           </section>
         </section>
@@ -167,13 +163,17 @@ class HomePage extends React.Component {
                 leftDataArr.map((item, index) => {
                   return (
                     <li key={index}>
-                      <span className="type-name">{item.title}：</span>
-                      <Tag color={item.bgColor} onClick={() => {
-                        if (adminRole === 1) return;
-                        this.props.history.push(item.path);
-                      }}>
+                      <section
+                        className='data-circle'
+                        style={{backgroundColor: item.bgColor}}
+                        onClick={() => {
+                          if (adminRole === 1) return;
+                          this.props.history.push(item.path);
+                        }}
+                      >
                         {item.count}
-                      </Tag>
+                      </section>
+                      <span className="type-name">{item.title}</span>
                     </li>
                   )
                 })
@@ -199,23 +199,28 @@ class HomePage extends React.Component {
             {/* echats */}
             <section className="echart-box">
               <p>
-                <i className="iconfont icon-gongcheng" />
+                <i className="iconfont icon-huanyanse-12" />
                 <span>工程增量</span>
               </p>
               <section className="echart-data" id="project-echart" />
             </section>
             <section className="echart-box">
               <p>
-                <i className="iconfont icon-f-location" />
+                <i className="iconfont icon-huanyanse-12" />
                 <span>布点增量</span>
               </p>
               <section className="echart-data" id="point-echart" />
+            </section>
+
+            <section className="table-box">
+              <WarnProjectRank data={this.state.projectTable} />
             </section>
           </section>
           
           {/* 地图 */}
           <section className="body-center">
             <ProjectMap
+              index={Math.random()}
               projects={this.state.projects}
               zoom={this.state.zoom}
               centerPoint={this.props.areaPoint}
@@ -226,6 +231,17 @@ class HomePage extends React.Component {
                 })
               }}
             />
+            
+            <section className="echart-box warn-type-echart-box" style={{marginTop: 0}}>
+              <p>
+                <i className="iconfont icon-huanyanse-12" />
+                <span>报警类型</span>
+              </p>
+              <section
+                className="echart-data"
+                id="warn-type-echart"
+              />
+            </section>
           </section>
 
           {/* 报警、检查 */}
@@ -235,15 +251,17 @@ class HomePage extends React.Component {
                 rightDataArr.map((item, index) => {
                   return (
                     <li key={index}>
-                      <section className='right-data'>
-                        <span className="type-name">{item.title}：</span>
-                        <Tag color={item.bgColor} onClick={() => {
-                            if (adminRole === 1) return;
-                            this.props.history.push(item.path);
-                          }}>
-                          {item.count}
-                        </Tag>
+                      <section
+                        className='data-circle'
+                        style={{backgroundColor: item.bgColor}}
+                        onClick={() => {
+                          if (adminRole === 1) return;
+                          this.props.history.push(item.path);
+                        }}
+                      >
+                        {item.count}
                       </section>
+                      <span className="type-name">{item.title}</span>
                     </li>
                   )
                 })
@@ -270,33 +288,22 @@ class HomePage extends React.Component {
             {/* echats */}
             <section className="echart-box">
               <p>
-                <i className="iconfont icon-jinggao" />
+                <i className="iconfont icon-huanyanse-12" />
                 <span>蚁情报警（已处理）</span>
               </p>
               <section className="echart-data" id="warn-echart" />
             </section>
             <section className="echart-box">
               <p>
-                <i className="iconfont icon-jianchajieguo" />
+                <i className="iconfont icon-huanyanse-12" />
                 <span>检查数</span>
               </p>
               <section className="echart-data" id="inspect-echart" />
             </section>
-          </section>
-        </section>
-        
-        {/* 报警 */}
-        <section className="home-footer">
-          <section className="table-box">
-            <WarnProjectRank data={this.state.projectTable} />
-            <LatestWarn data={this.state.warnTable} />
-          </section>
-          <section className="echart-box" style={{marginTop: 0}}>
-            <p>
-              <i className="iconfont icon-jinggao" />
-              报警类型
-            </p>
-            <section className="echart-data" id="warn-type-echart" />
+
+            <section className="table-box">
+              <LatestWarn data={this.state.warnTable} />
+            </section>
           </section>
         </section>
       </section>
@@ -350,22 +357,22 @@ class HomePage extends React.Component {
       }
     })
     const chartDom = document.getElementById('warn-type-echart');
-    const warnChart = echarts.init(chartDom);
+    const warnChart = echarts.init(chartDom, 'dark');
     const option = {
       darkMode: true,
       legend: {
         top: 'bottom'
       },
-      color: ['#ee6666', '#fac858', '#73c0de'],
+      color: ['#ee6666', '#FAC857', '#01B4D2'],
+      backgroundColor: '#2B2B2B',
       series: [
         {
           name: '',
           type: 'pie',
-          radius: [10, 70],
+          radius: [40, 70],
           center: ['50%', '50%'],
-          roseType: 'area',
           itemStyle: {
-            borderRadius: 6
+            borderRadius: 4
           },
           label: {
             textBorderWidth: 0
@@ -383,29 +390,29 @@ class HomePage extends React.Component {
   // 工程增量
   getProjectEchart = (res) => {
     const chartDom = document.getElementById('project-echart');
-    const projectChart = echarts.init(chartDom);
-    const option = barOption(res.project_time_names, res.project_counts);
+    const projectChart = echarts.init(chartDom, 'dark');
+    const option = lineOption(res.project_time_names, res.project_counts);
     option && projectChart.setOption(option);
   }
   // 布点增量
   getPointEchart = (res) => {
     const chartDom = document.getElementById('point-echart');
-    const pointChart = echarts.init(chartDom);
-    const option = lineOption(res.point_time_names, res.point_counts);
+    const pointChart = echarts.init(chartDom, 'dark');
+    const option = barOption(res.point_time_names, res.point_counts);
     option && pointChart.setOption(option);
   }
   // 已处理报警
   getWarnEchart = (res) => {
     const chartDom = document.getElementById('warn-echart');
-    const warnChart = echarts.init(chartDom);
-    const option = barOption(res.warn_time_names, res.warn_counts);
+    const warnChart = echarts.init(chartDom, 'dark');
+    const option = lineOption(res.warn_time_names, res.warn_counts);
     option && warnChart.setOption(option);
   }
   // 检查数
   getInspectEchart = (res) => {
     const chartDom = document.getElementById('inspect-echart');
-    const inspectChart = echarts.init(chartDom);
-    const option = lineOption(res.inspect_time_names, res.inspect_counts);
+    const inspectChart = echarts.init(chartDom, 'dark');
+    const option = barOption(res.inspect_time_names, res.inspect_counts);
     option && inspectChart.setOption(option);
   }
 

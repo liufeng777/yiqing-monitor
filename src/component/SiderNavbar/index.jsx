@@ -71,21 +71,21 @@ class SiderNavbar extends React.Component{
   }
 
   componentDidMount () {
-    if (!this.props.cacheTags.length) {
-      this.props.history.push('/home')
-    }
+    // if (!this.props.cacheTags.length) {
+    //   this.props.history.push('/home')
+    // }
   }
 
   render () {
     const adminRole = sessionStorage.getItem('adminRole');
     return (
       <section className="navbar-box" style={{width: `${this.state.open ? '152px' : '50px'}`}}>
-        <header className="navbar-header">
+        {/* <header className="navbar-header">
           <i className="iconfont icon-ANT-black" />
           { this.state.open && 
             <span>蚁情监测</span>
           }
-        </header>
+        </header> */}
         <section className="navbar-body">
           {navbarArr.map((item, index) =>
             {return +adminRole >= item.access ?

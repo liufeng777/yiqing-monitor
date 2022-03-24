@@ -6,6 +6,27 @@
   "description": "蚁情监控",
   "glyphs": [
     {
+      "icon_id": "4315844",
+      "name": "line",
+      "font_class": "fuzhushuxian",
+      "unicode": "e6f4",
+      "unicode_decimal": 59124
+    },
+    {
+      "icon_id": "27927044",
+      "name": "竖线1",
+      "font_class": "huanyanse-12",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "6941232",
+      "name": "竖线",
+      "font_class": "shuxian",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
       "icon_id": "201557",
       "name": "关闭",
       "font_class": "guanbi",
