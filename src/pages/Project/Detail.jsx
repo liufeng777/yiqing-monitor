@@ -248,20 +248,12 @@ export const ProjectDetail = (props) => {
               提交
             </Button>
             <Button htmlType="button" onClick={throttle(1000, () => {
-              if (props.detail) {
-                setDetail(props.detail)
-                if (props.detail.image_path) {
-                  setImgUrl(window.globalData.host + props.detail.image_path)
-                } else {
-                  setImgUrl('')
-                }
-              } else {
-                setDetail(defaultDetail)
-                setImgUrl('')
-              }
+              setDetail(defaultDetail)
+              setImgUrl('');
+              props.onCancel();
             })}
             >
-              重置
+              取消
             </Button>
           </section>
         </Form.Item>

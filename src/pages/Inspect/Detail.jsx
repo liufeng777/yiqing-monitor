@@ -414,14 +414,11 @@ export const InspectDetail = (props) => {
               提交
             </Button>
             <Button htmlType="button" onClick={throttle(1000, () => {
-              if (props.detail) {
-                setDetail(props.detail)
-              } else {
-                setDetail(defaultDetail)
-              }
+              setDetail(defaultDetail)
+              props.onCancel();
             })}
             >
-              重置
+              取消
             </Button>
           </section>
         </Form.Item>
