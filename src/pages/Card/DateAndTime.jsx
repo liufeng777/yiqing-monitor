@@ -11,7 +11,7 @@ export const DateAndTime = (props) => {
 
   return (
     <section className="date-and-time-box" style={{width: '100%'}}>
-      <DatePicker locale={locale} style={{marginRight: 10, width: '50%'}}
+      <DatePicker locale={locale} style={{marginRight: props.hideTime ? 0 : 10, width: props.hideTime ? '100%' : '50%'}}
         value={props.value ? moment(date, dateFormat) : ''}
         format={dateFormat}
         onChange={(moment, val) => {
@@ -19,7 +19,7 @@ export const DateAndTime = (props) => {
           props.onChange(timestamp);
         }}
       />
-      <TimePicker locale={locale}
+      {!props.hideTime && <TimePicker locale={locale}
         style={{width: 'calc(50% - 10px)'}}
         value={props.value ? moment(time, timeFormat) : ''}
         format={timeFormat}
@@ -27,7 +27,7 @@ export const DateAndTime = (props) => {
           const timestamp = getTimestamp(date, val);
           props.onChange(timestamp);
         }}
-      />
+      />}
     </section>
   );
 };

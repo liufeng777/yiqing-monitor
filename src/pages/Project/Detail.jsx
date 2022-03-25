@@ -234,7 +234,7 @@ export const ProjectDetail = (props) => {
           />
         </Form.Item>
         <Form.Item label="开工日期" name="build_timestamp">
-          <DateAndTime value={detail.build_timestamp} onChange={(val) => {
+          <DateAndTime hideTime={true} value={detail.build_timestamp} onChange={(val) => {
             setDetail({
               ...detail,
               build_timestamp: val
