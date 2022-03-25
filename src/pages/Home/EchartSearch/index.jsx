@@ -9,6 +9,7 @@ export const EchartSearch = (props) => {
   return (
     <section className="echart-search">
       <Button
+        style={{backgroundColor: '#A2A2A2'}}
         icon={<i className="iconfont icon-zuofanye" />}
         onClick={() => {
           setIndex(index - 1);
@@ -26,6 +27,7 @@ export const EchartSearch = (props) => {
         <Radio.Button value={2}>按月</Radio.Button>
       </Radio.Group>
       <Button
+        style={{backgroundColor: '#A2A2A2'}}
         icon={<i className="iconfont icon-youfanye" />}
         onClick={() => {
           setIndex(index + 1);

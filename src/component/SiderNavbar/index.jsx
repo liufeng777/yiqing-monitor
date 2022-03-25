@@ -71,9 +71,10 @@ class SiderNavbar extends React.Component{
   }
 
   componentDidMount () {
-    // if (!this.props.cacheTags.length) {
-    //   this.props.history.push('/home')
-    // }
+    if (!this.props.cacheTags.length &&
+      !this.props.location.pathname.includes('/point/map')) {
+      this.props.history.push('/home')
+    }
   }
 
   render () {
