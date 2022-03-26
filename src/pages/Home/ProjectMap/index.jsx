@@ -15,10 +15,18 @@ class ProjectMap extends React.Component {
       points: []
     }
   };
+  
+
+  componentDidMount() {
+   console.log('######', Map)
+  }
+
+  // componentWillReceiveProps() {
+  //   this.renderMap()
+  // }
 
   render () {
     const adminRole = +sessionStorage.getItem('adminRole');
-
     return (
       <section className="project-map-box">
         <section id="project-map-container">
@@ -88,6 +96,16 @@ class ProjectMap extends React.Component {
       }
       </section>
     )
+  }
+
+  renderMap = () => {
+    const map = new window.BMapGL.Map("project-map-container");
+    // 中心点
+    const centerPoint = this.props.centerPoint ?
+    new window.BMapGL.Point(this.props.centerPoint.lng, this.props.centerPoint.lat) :
+    new window.BMapGL.Point(108.55, 34.32)
+    console.log('#####', this.props.zoom)
+    map.centerAndZoom(centerPoint, this.props.zoom);
   }
 
   // 根据工程获取布点

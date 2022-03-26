@@ -5,18 +5,6 @@
   overflow: auto;
   background-color: #2B2B2B;
   color: #fff;
-  .table-box {
-    width: 400px;
-    .ant-table-small .ant-table-thead > tr > th {
-      background: #A79177;
-    }
-    .even-line {
-      background-color: #AAAAAA;
-    }
-    .odd-line {
-      background-color: #808080;
-    }
-  }
   .echart-box {
     width: 400px;
     position: relative;
@@ -24,7 +12,7 @@
       position: absolute;
       left: 0px;
       top: 0px;
-      z-index: 99999;
+      z-index: 999;
       color: #F9D5AA;
       font-weight: bold;
     }
@@ -43,6 +31,15 @@
     .search-box {
       display: flex;
       align-items: center;
+      .ant-select:not(.ant-select-customize-input) .ant-select-selector  {
+        background-color: #736758;
+      }
+      .ant-select-selection-item {
+        color: #fff;
+      }
+      .ant-select-arrow {
+        color: rgba(255, 255, 255, 0.8);
+      }
       .search-btn {
         width: 30px;
         height: 30px;
@@ -104,12 +101,33 @@
     .body-center {
       width: calc(100% - 820px);
       margin: 30px 10px 0 10px;
-      .warn-type-echart-box {
-        width: 100%;
-        #warn-type-echart {
-          width: 100%;
-          height: 258px;
-        }
+    }
+  }
+  .home-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    .table-title {
+      color: #F9D5AA;
+      font-weight: bold;
+      margin-bottom: 6px !important;
+    }
+    .table-box {
+      width: calc(50% - 210px);
+      .ant-table, .ant-table-thead > tr > th {
+        color: #fff;
+      }
+      .ant-table-tbody>tr.ant-table-row:hover > td {
+        background-color: transparent;
+      }
+      .ant-table-small .ant-table-thead > tr > th {
+        background: #A79177;
+      }
+      .even-line {
+        background-color: #AAAAAA;
+      }
+      .odd-line {
+        background-color: #808080;
       }
     }
   }

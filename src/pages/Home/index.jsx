@@ -72,7 +72,7 @@ class HomePage extends React.Component {
       count: this.state.data.point_count,
       title: '布点',
       path: '/point',
-      bgColor: '#01B4D2'
+      bgColor: '#4bb419'
     }]
 
     const rightDataArr = [{
@@ -83,10 +83,10 @@ class HomePage extends React.Component {
       bgColor: '#EE6666'
     }, {
       icon: 'icon-tance',
-      count: this.state.data.detect_count,
-      title: '探测',
+      count: this.state.data.inspect_count,
+      title: '检查',
       path: '/detect',
-      bgColor: '#01B4D2'
+      bgColor: '#d9a93d'
     }]
 
     const adminRole = +sessionStorage.getItem('adminRole');
@@ -150,7 +150,7 @@ class HomePage extends React.Component {
           <section className="home-top-item home-title" />
           {/* 登录信息 */}
           <section className="home-top-item login-info">
-            <span style={{marginRight: 40}}>检查数：{this.state.data.inspect_count}</span>
+            <span style={{marginRight: 40}}>探测数：{this.state.data.detect_count}</span>
             <Header onSubmit={(val) => this.props.changeLoginInfo(val)} />
           </section>
         </section>
@@ -211,10 +211,6 @@ class HomePage extends React.Component {
               </p>
               <section className="echart-data" id="point-echart" />
             </section>
-
-            <section className="table-box">
-              <WarnProjectRank data={this.state.projectTable} />
-            </section>
           </section>
           
           {/* 地图 */}
@@ -231,17 +227,6 @@ class HomePage extends React.Component {
                 })
               }}
             />
-            
-            <section className="echart-box warn-type-echart-box" style={{marginTop: 0}}>
-              <p>
-                <i className="iconfont icon-huanyanse-12" />
-                <span>报警类型</span>
-              </p>
-              <section
-                className="echart-data"
-                id="warn-type-echart"
-              />
-            </section>
           </section>
 
           {/* 报警、检查 */}
@@ -300,22 +285,36 @@ class HomePage extends React.Component {
               </p>
               <section className="echart-data" id="inspect-echart" />
             </section>
-
-            <section className="table-box">
-              <LatestWarn data={this.state.warnTable} />
-            </section>
           </section>
         </section>
+
+        <section className='home-footer'>
+          <section className="table-box">
+              <WarnProjectRank data={this.state.projectTable} />
+            </section>
+          <section className="echart-box warn-type-echart-box" style={{marginTop: 0}}>
+              <p className='table-title'>
+                <i className="iconfont icon-huanyanse-12" />
+                <span>报警类型</span>
+              </p>
+              <section
+                className="echart-data"
+                id="warn-type-echart"
+              />
+          </section>
+
+          <section className="table-box">
+            <LatestWarn data={this.state.warnTable} />
+          </section>
+          </section>
       </section>
     );
   }
   
   // 获取报警总数
   getWarnCount = (data) => {
-    if (data && Object.keys(data).length) {
-      return Object.keys(data).reduce((pre, cur) => {
-        return data[pre] + data[cur]
-       })  
+    if (data && data[3]) {
+      return data[3] 
     } else {
       return 0
     }
