@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2717318 */
-  src: url('iconfont.woff2?t=1647848151336') format('woff2'),
-       url('iconfont.woff?t=1647848151336') format('woff'),
-       url('iconfont.ttf?t=1647848151336') format('truetype');
+  src: url('iconfont.woff2?t=1648282139910') format('woff2'),
+       url('iconfont.woff?t=1648282139910') format('woff'),
+       url('iconfont.ttf?t=1648282139910') format('truetype');
 }
 
 .iconfont {
@@ -13,16 +13,48 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-fuzhushuxian:before {
-  content: "\e6f4";
+.icon-a-1:before {
+  content: "\e605";
+}
+
+.icon-a-7:before {
+  content: "\e60c";
+}
+
+.icon-a-10:before {
+  content: "\e60d";
+}
+
+.icon-a-2:before {
+  content: "\e60e";
+}
+
+.icon-a-9:before {
+  content: "\e60f";
+}
+
+.icon-a-5:before {
+  content: "\e610";
+}
+
+.icon-a-4:before {
+  content: "\e611";
+}
+
+.icon-a-6:before {
+  content: "\e612";
+}
+
+.icon-a-8:before {
+  content: "\e615";
+}
+
+.icon-a-3:before {
+  content: "\e616";
 }
 
 .icon-huanyanse-12:before {
   content: "\e633";
-}
-
-.icon-shuxian:before {
-  content: "\e638";
 }
 
 .icon-guanbi:before {

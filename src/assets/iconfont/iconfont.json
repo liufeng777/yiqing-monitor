@@ -6,11 +6,74 @@
   "description": "蚁情监控",
   "glyphs": [
     {
-      "icon_id": "4315844",
-      "name": "line",
-      "font_class": "fuzhushuxian",
-      "unicode": "e6f4",
-      "unicode_decimal": 59124
+      "icon_id": "28528013",
+      "name": "1",
+      "font_class": "a-1",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "28528015",
+      "name": "7",
+      "font_class": "a-7",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "28528016",
+      "name": "10",
+      "font_class": "a-10",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "28528017",
+      "name": "2",
+      "font_class": "a-2",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "28528018",
+      "name": "9",
+      "font_class": "a-9",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "28528019",
+      "name": "5",
+      "font_class": "a-5",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "28528020",
+      "name": "4",
+      "font_class": "a-4",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "28528021",
+      "name": "6",
+      "font_class": "a-6",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "28528022",
+      "name": "8",
+      "font_class": "a-8",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "28528023",
+      "name": "3",
+      "font_class": "a-3",
+      "unicode": "e616",
+      "unicode_decimal": 58902
     },
     {
       "icon_id": "27927044",
@@ -18,13 +81,6 @@
       "font_class": "huanyanse-12",
       "unicode": "e633",
       "unicode_decimal": 58931
-    },
-    {
-      "icon_id": "6941232",
-      "name": "竖线",
-      "font_class": "shuxian",
-      "unicode": "e638",
-      "unicode_decimal": 58936
     },
     {
       "icon_id": "201557",

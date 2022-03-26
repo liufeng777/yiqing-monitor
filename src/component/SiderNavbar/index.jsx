@@ -13,52 +13,52 @@ import './index.less';
 const navbarArr = [{
   path: '/home',
   name: '首页',
-  icon: 'icon-yemian-copy-copy',
+  icon: 'icon-a-7',
   access: 1
 }, {
   path: '/project',
   name: '工程',
-  icon: 'icon-gongcheng',
+  icon: 'icon-a-4',
   access: 1
 }, {
   path: '/point',
   name: '布点',
-  icon: 'icon-f-location',
+  icon: 'icon-a-1',
   access: 2
 }, {
   path: '/device',
   name: '设备',
-  icon: 'icon-shebei',
+  icon: 'icon-a-10',
   access: 2
 }, {
   path: '/card',
   name: '通讯卡',
-  icon: 'icon-tongxunka-32',
+  icon: 'icon-a-9',
   access: 2
 }, {
   path: '/detect',
   name: '探测',
-  icon: 'icon-tance',
+  icon: 'icon-a-6',
   access: 2
 }, {
   path: '/inspect',
   name: '检查',
-  icon: 'icon-jianchajieguo',
+  icon: 'icon-a-8',
   access: 2
 }, {
   path: '/warning',
   name: '报警',
-  icon: 'icon-jinggao',
+  icon: 'icon-a-2',
   access: 1
 }, {
   path: '/admin',
   name: '管理员',
-  icon: 'icon-guanliyuan1',
+  icon: 'icon-a-3',
   access: 2
 }, {
   path: '/user',
   name: '用户',
-  icon: 'icon-yonghu',
+  icon: 'icon-a-5',
   access: 2
 }]
 
