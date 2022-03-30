@@ -25,8 +25,8 @@ class LoginPage extends React.Component {
     return (
       <section className="login-page">
         <section className="login-box">
-          <header className="title">蚁情监测系统</header>
-          <Form onFinish={async (values) => {
+          <header className="title">蚁情监测平台</header>
+          <Form autoComplete='off' onFinish={async (values) => {
             const res = await login({
               mobile: this.state.mobile,
               password: MD5(this.state.password).toString(),
@@ -68,7 +68,7 @@ class LoginPage extends React.Component {
             >
               <Input placeholder="请输入手机号"
                 allowClear
-                style={{height: 40}}
+                style={{height: 40, background: '#000001'}}
                 prefix={<i className="iconfont icon-shouji" />}
                 value={this.state.mobile}
                 onChange={(e) => {
@@ -130,9 +130,9 @@ class LoginPage extends React.Component {
               </section>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit"
-                style={{width: 328, height: 40, fontSize: 16}}
-              >登 录</Button>
+              <Button htmlType="submit"
+                style={{width: 328, height: 40, fontSize: 16, background: 'rgb(36, 34, 21)', border: 'none'}}
+              ><span className='login-text'>登 录</span></Button>
             </Form.Item>
           </Form>
         </section>

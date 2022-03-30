@@ -3,12 +3,9 @@ import { Link } from 'react-router-dom';
 import { Descriptions, Tabs } from 'antd';
 import { pointListInMap, projectGet, pointGet } from '../../../api';
 import { getDateTime } from '../../Card/DateAndTime';
-import { inspectResult, measureType, warnType, styleJson } from '../../../assets/js/constant';
+import { inspectResult, measureType, warnType } from '../../../assets/js/constant';
 import PointPage from '../index';
 import './index.less';
-
-// 地图
-import { Map, NavigationControl, ZoomControl, CustomOverlay } from 'react-bmapgl';
 
 const { TabPane } = Tabs;
 
@@ -28,9 +25,9 @@ export default class PointMap extends React.Component {
   }
 
   render () {
-    const centerPoint = this.state.project ? {
-      lng: this.state.project.longitude / 1000000, lat: this.state.project.latitude / 1000000
-    } : {lng: 108.55, lat: 34.32}
+    // const centerPoint = this.state.project ? {
+    //   lng: this.state.project.longitude / 1000000, lat: this.state.project.latitude / 1000000
+    // } : {lng: 108.55, lat: 34.32}
 
     return (
       <section className="point-map-box">
@@ -46,16 +43,14 @@ export default class PointMap extends React.Component {
           </span>
         </header>
         <section className='card-container'>
-          <Tabs type="card" defaultActiveKey={
-            this.props.location.state?.from === 'home' ? 'map' : 'list'
-          }>
+          <Tabs type="card" defaultActiveKey="map">
             <TabPane tab="布点列表" key="list">
               <PointPage hideTags={true} projId={this.props.match.params.proId} projName={this.state.project?.name} />
             </TabPane>
             <TabPane tab="布点分布" key="map">
               <section className='point-map-body'>
                 <section id="point-map-container">
-                  <Map
+                  {/* <Map
                     style={{height: '100%'}}
                     center={centerPoint}
                     zoom={18}
@@ -85,7 +80,7 @@ export default class PointMap extends React.Component {
                   })}
                 <NavigationControl />
                 <ZoomControl />
-                  </Map>
+                  </Map> */}
               </section>
               {
               this.state.activePoint &&
@@ -125,6 +120,28 @@ export default class PointMap extends React.Component {
     )
   }
 
+  renderMap = (points, project) => {
+    const centerPoint = project ? [project.longitude / 1000000, project.latitude / 1000000
+    ] : [108.55, 34.32]
+    const map = new window.AMap.Map('point-map-container', {
+      zoom: 18,
+      center: centerPoint,
+    })
+
+    for (const item of points) {
+      const marker = new window.AMap.Marker({
+          icon: require(`../../../assets/image/green.png`),
+          position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
+          offset: new window.AMap.Pixel(-17, -42) // 相对于基点的偏移位置
+      });
+
+      map.add(marker);
+      marker.on("click", () => { 
+        this.getPointInfo(item.point_id)
+      });
+    }
+  }
+
   // 根据工程获取布点
   getPointByProject = async () => {
     const res = await pointListInMap({
@@ -134,6 +151,7 @@ export default class PointMap extends React.Component {
       this.setState({
         points: res.records
       })
+      this.renderMap(res.records, this.state.project)
     }
   }
 
@@ -146,6 +164,7 @@ export default class PointMap extends React.Component {
       this.setState({
         project: res.record
       })
+      this.renderMap(this.state.points, res.record)
     }
   }
 

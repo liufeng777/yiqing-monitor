@@ -1,13 +1,12 @@
 import React from 'react';
-import { Tooltip } from 'antd';
+import { Tooltip, Button } from 'antd';
 import { SelectArea } from '../../component/SelectArea';
-import { overviewStatistic, projectMap, overviewTopProjWarn } from '../../api';
+import { overviewStatistic, projectMap, overviewTopProjWarn, pointListInMap } from '../../api';
 import { warningType, barOption, lineOption } from '../../assets/js/constant';
 import { Header } from '../../component/Header';
 import { EchartSearch } from './EchartSearch';
 import { WarnProjectRank } from './WarnProjectRank';
 import { LatestWarn } from './LatestWarn';
-import ProjectMap from './ProjectMap';
 import './index.less';
 
 import * as echarts from 'echarts/core';
@@ -49,7 +48,8 @@ class HomePage extends React.Component {
       warnAndInspectIndex: 0,
       // 表格数据
       projectTable: [],
-      warnTable: []
+      warnTable: [],
+      points: []
     }
   }
 
@@ -215,18 +215,56 @@ class HomePage extends React.Component {
           
           {/* 地图 */}
           <section className="body-center">
-            <ProjectMap
-              index={Math.random()}
+            {/* <ProjectMap
               projects={this.state.projects}
               zoom={this.state.zoom}
               centerPoint={this.props.areaPoint}
-              activeProject={this.state.activeProject}
-              changeActiveProject={(item) => {
-                this.setState({
-                  activeProject: item
-                })
-              }}
-            />
+            /> */}
+
+            <section className="project-map-box">
+              <section id="project-map-container" />
+
+            {/* 工程详情 */}
+            {
+              this.state.activeProject &&
+              <section className='project-info'>
+                <header className='info-header'>
+                  <span className='info-name'>{this.state.activeProject.name}</span>
+                  <i className='iconfont icon-guanbi1' onClick={() => {
+                    this.setState({
+                      activeProject: null
+                    })
+                  }} />
+                </header>
+                <ul className='info-body'>
+                  <li style={{marginRight: 20}}>
+                    <span>未处理报警(蚁情)数量：</span>
+                    <span style={{fontSize: 20, fontWeight: 'bold', color: '#FF4D4F'}}>
+                      {this.state.activeProject.termite_wait_count}
+                    </span>
+                  </li>
+                  <li>
+                    <span>报警(蚁情)总数：</span>
+                    <span style={{fontSize: 20, fontWeight: 'bold', color: '#FAAD14'}}>
+                      {this.state.activeProject.termite_count}
+                    </span>
+                  </li>
+                </ul>
+                { adminRole > 1 && <footer>
+                    <Button type="link" style={{fontWeight: 'bold'}} onClick={() => {
+                      this.props.history.push({
+                        pathname: `/point/map/${this.state.activeProject.project_id}`,
+                        state: { from : 'home' }
+                      })
+                    }}>查看布点（{this.state.points.length}）</Button>
+                  </footer>
+                }
+              </section>
+            }
+            </section>
+
+
+
           </section>
 
           {/* 报警、检查 */}
@@ -274,7 +312,7 @@ class HomePage extends React.Component {
             <section className="echart-box">
               <p>
                 <i className="iconfont icon-huanyanse-12" />
-                <span>蚁情报警（已处理）</span>
+                <span>蚁情报警</span>
               </p>
               <section className="echart-data" id="warn-echart" />
             </section>
@@ -300,6 +338,7 @@ class HomePage extends React.Component {
               <section
                 className="echart-data"
                 id="warn-type-echart"
+                style={{height: 235}}
               />
           </section>
 
@@ -363,7 +402,7 @@ class HomePage extends React.Component {
         top: 'bottom'
       },
       color: ['#ee6666', '#FAC857', '#01B4D2'],
-      backgroundColor: '#2B2B2B',
+      backgroundColor: '#000001',
       series: [
         {
           name: '',
@@ -425,20 +464,24 @@ class HomePage extends React.Component {
         projects: res.records
       });
     }
+    this.renderMap(this.state.zoom, this.state.projects)
   }
 
   // 获取地图层级
   getMapCenterAndZoom = () => {
+    let zoom = 14;
     if (!this.state.area_code) {
+      zoom = 5
       this.setState({
-        zoom: 6
+        zoom: 5
       })
-    }
-    if (!(this.state.area_code % 10000)) {
+    } else if (!(this.state.area_code % 10000)) {
+      zoom = 10
       this.setState({
         zoom: 10
       })
     } else if (!(this.state.area_code % 100)) {
+      zoom = 12
       this.setState({
         zoom: 12
       })
@@ -447,6 +490,7 @@ class HomePage extends React.Component {
         zoom: 14
       })
     }
+    this.renderMap(zoom, this.state.projects)
   }
 
   // 获取蚁情最多的工程和最新蚁情报警
@@ -460,6 +504,57 @@ class HomePage extends React.Component {
         warnTable: res.warns
       })
     }
+  }
+
+  renderMap = (zoom, projects) => {
+    console.log('#######', zoom)
+    // 地图初始化应该在地图容器div已经添加到DOM树之后
+    const center = [this.props.areaPoint?.lng || 108.55, this.props.areaPoint?.lat || 34.32]
+    const map = new window.AMap.Map('project-map-container', {
+      zoom,
+      center, //中心点坐标
+      mapStyle: 'amap://styles/darkblue',
+    })
+
+    for (const item of projects) {
+        const img = this.getMarkerImg(item)
+
+        const marker = new window.AMap.Marker({
+            icon: require(`../../assets/image/${img}`),
+            position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
+            offset: new window.AMap.Pixel(-17, -42) // 相对于基点的偏移位置
+        });
+
+        map.add(marker);
+        marker.on("click", () => { 
+          this.setState({
+            activeProject: item
+          })  
+          this.getPointByProject(item)
+        });
+      }
+  }
+
+  // 根据工程获取布点
+  getPointByProject = async (item) => {
+    const res = await pointListInMap({
+      project_id: item.project_id
+    });
+    if (res) {
+      this.setState({
+        points: res.records
+      })
+    }
+  }
+
+  getMarkerImg = (project) => {
+    if (project.termite_wait_count > 0) {
+        return 'red.png'
+      } else if (project.termite_count > 0) {
+        return 'yellow.png'
+      } else {
+        return 'blue.png'
+      }
   }
 };
 

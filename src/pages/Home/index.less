@@ -3,8 +3,63 @@
   min-width: 1200px;
   padding: 16px;
   overflow: auto;
-  background-color: #2B2B2B;
+  background-color: #000001;
   color: #fff;
+  .project-map-box {
+    position: relative;
+    height: 575px;
+    .project-title {
+      span {
+        font-weight: bold;
+      }
+      .icon-gongcheng {
+        color: #acacac;
+        margin-right: 4px;
+      }
+    }
+    #project-map-container {
+      height: 520px;
+      width: 100%;
+    }
+  
+    .project-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(36, 34, 21, 0.9);
+      z-index: 99999;
+      color: #fff;
+      padding: 8px;
+      .info-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .info-name {
+          font-weight: bold;
+        }
+        .icon-guanbi1 {
+          cursor: pointer;
+        }
+      }
+      .info-body {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  .BMap_bubble_title {
+    font-weight: bold;
+  }
+  .point-detail {
+    .detail-value {
+      font-weight: bold;
+    }
+  }
+  
+  
   .echart-box {
     width: 400px;
     position: relative;

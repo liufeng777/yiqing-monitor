@@ -28,8 +28,8 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+   
     <script type="text/javascript" src="%PUBLIC_URL%/static/config.js"></script>
-    <script type="text/javascript" src="https://api.map.baidu.com/api?v=1.0&&type=webgl&ak=cfOQusfuc8ejaD39tSO4PMSN6vqnL5Yz"></script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
@@ -41,5 +41,11 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=24e1bc386c11e13da5dec1123c1fdffc"></script> 
+    <script type="text/javascript">
+      window._AMapSecurityConfig = {
+          securityJsCode:'d9a8b369d2b2e0dc590e5dd3c1ca8236',
+      }
+    </script>
   </body>
 </html>
