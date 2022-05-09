@@ -167,7 +167,7 @@ export const barOption = (xData, yData) => {
       splitNumber: 1,
     },
     color: ['#31EFFF'],
-    backgroundColor: '#000001',
+    backgroundColor: '#2b2b2b',
     series: [
       {
         data: yData,
@@ -195,7 +195,7 @@ export const lineOption = (xData, yData) => {
       splitNumber: 1,
     },
     color: ['#31EFFF'],
-    backgroundColor: '#000001',
+    backgroundColor: '#2b2b2b',
     series: [
       {
         data: yData,

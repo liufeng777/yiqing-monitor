@@ -402,7 +402,7 @@ class HomePage extends React.Component {
         top: 'bottom'
       },
       color: ['#ee6666', '#FAC857', '#01B4D2'],
-      backgroundColor: '#000001',
+      backgroundColor: '#2b2b2b',
       series: [
         {
           name: '',
