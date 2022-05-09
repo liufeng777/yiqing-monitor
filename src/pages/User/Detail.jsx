@@ -64,15 +64,15 @@ export const UserDetail = (props) => {
         <Form.Item label="手机号" name="mobile"
           rules={[
             { required: true, message: '请输入手机号' },
-            {
-              validator(rule, value) {
-                const reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-                if (value && !reg.test(value)) {
-                  return Promise.reject('请输入正确的手机号');
-                }
-                return Promise.resolve();
-              },
-            },
+            // {
+            //   validator(rule, value) {
+            //     const reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+            //     if (value && !reg.test(value)) {
+            //       return Promise.reject('请输入正确的手机号');
+            //     }
+            //     return Promise.resolve();
+            //   },
+            // },
           ]}
         >
           <Input value={detail.mobile} onChange={(e) => {

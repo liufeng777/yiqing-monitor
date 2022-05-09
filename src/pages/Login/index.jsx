@@ -55,20 +55,20 @@ class LoginPage extends React.Component {
             <Form.Item name="mobile"
               rules={[
                 { required: true, message: '请输入手机号' },
-                {
-                  validator(rule, value) {
-                    const reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-                    if (value && !reg.test(value)) {
-                      return Promise.reject('请输入正确的手机号');
-                    }
-                    return Promise.resolve();
-                  },
-                },
+                // {
+                //   validator(rule, value) {
+                //     const reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+                //     if (value && !reg.test(value)) {
+                //       return Promise.reject('请输入正确的手机号');
+                //     }
+                //     return Promise.resolve();
+                //   },
+                // },
               ]}
             >
               <Input placeholder="请输入手机号"
                 allowClear
-                style={{height: 40, background: '#000001'}}
+                style={{height: 40, background: '#2b2b2b'}}
                 prefix={<i className="iconfont icon-shouji" />}
                 value={this.state.mobile}
                 onChange={(e) => {
@@ -79,10 +79,11 @@ class LoginPage extends React.Component {
                   })
                 }}
                 onBlur={() => {
-                  const reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-                  if (reg.test(this.state.mobile)) {
-                    this.getCode()
-                  }
+                  this.getCode()
+                  // const reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+                  // if (reg.test(this.state.mobile)) {
+                  //   this.getCode()
+                  // }
                 }}
               />
             </Form.Item>
