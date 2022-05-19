@@ -25,10 +25,6 @@ export default class PointMap extends React.Component {
   }
 
   render () {
-    // const centerPoint = this.state.project ? {
-    //   lng: this.state.project.longitude / 1000000, lat: this.state.project.latitude / 1000000
-    // } : {lng: 108.55, lat: 34.32}
-
     return (
       <section className="point-map-box">
         <header className="header">
@@ -50,38 +46,7 @@ export default class PointMap extends React.Component {
             <TabPane tab="布点分布" key="map">
               <section className='point-map-body'>
                 <section id="point-map-container">
-                  {/* <Map
-                    style={{height: '100%'}}
-                    center={centerPoint}
-                    zoom={18}
-                    enableScrollWheelZoom
-                  >
-                  {this.state.points.map((item) => {
-                    return <CustomOverlay
-                        position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
-                        key={item.point_id}
-                    >
-                        <span
-                          style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center'}}
-                          onClick={() => {
-                            this.getPointInfo(item.point_id)
-                          }}
-                        >
-                        <span style={{
-                          display: 'inline-block',
-                          width: 15,
-                          height: 15,
-                          borderRadius: '50%',
-                          backgroundColor: '#aff891',
-                          boxShadow: `0 0 8px 8px #389e0d`
-                        }} />
-                        </span>
-                    </CustomOverlay>
-                  })}
-                <NavigationControl />
-                <ZoomControl />
-                  </Map> */}
-              </section>
+                </section>
               {
               this.state.activePoint &&
                 <section className='point-item-desc'>
@@ -121,22 +86,41 @@ export default class PointMap extends React.Component {
   }
 
   renderMap = (points, project) => {
-    const centerPoint = project ? [project.longitude / 1000000, project.latitude / 1000000
-    ] : [108.55, 34.32]
-    const map = new window.AMap.Map('point-map-container', {
-      zoom: 18,
-      center: centerPoint,
-    })
+    // const centerPoint = project ? [project.longitude / 1000000, project.latitude / 1000000
+    // ] : [108.55, 34.32]
+    // const map = new window.AMap.Map('point-map-container', {
+    //   zoom: 18,
+    //   center: centerPoint,
+    // })
 
+    // for (const item of points) {
+    //   const marker = new window.AMap.Marker({
+    //       icon: require(`../../../assets/image/green.png`),
+    //       position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
+    //       offset: new window.AMap.Pixel(-17, -42) // 相对于基点的偏移位置
+    //   });
+
+    //   map.add(marker);
+    //   marker.on("click", () => { 
+    //     this.getPointInfo(item.point_id)
+    //   });
+    // }
+
+    const centerPoint = new window.BMapGL.Point(project ? project.longitude / 1000000 : 108.55, project ? project.latitude / 1000000 : 34.32);
+    const map = new window.BMapGL.Map("point-map-container");
+    map.centerAndZoom(centerPoint, 18);
+
+    const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
+    map.addControl(zoomCtrl);
+    
     for (const item of points) {
-      const marker = new window.AMap.Marker({
-          icon: require(`../../../assets/image/green.png`),
-          position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
-          offset: new window.AMap.Pixel(-17, -42) // 相对于基点的偏移位置
-      });
+      const myIcon = new window.BMapGL.Icon(require(`../../../assets/image/green.png`), new window.BMapGL.Size(40, 40));     
+      // 创建标注对象并添加到地图  
+      const point = new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)
+      const marker = new window.BMapGL.Marker(point, {icon: myIcon});   
+      map.addOverlay(marker);
 
-      map.add(marker);
-      marker.on("click", () => { 
+      marker.addEventListener("click", () => { 
         this.getPointInfo(item.point_id)
       });
     }

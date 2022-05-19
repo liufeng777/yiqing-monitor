@@ -28,35 +28,7 @@ class ProjectMap extends React.Component {
     return (
       <section className="project-map-box">
         <section id="project-map-container">
-        {/* <Map
-          style={{height: '100%'}}
-          mapStyleV2={{ styleJson }}
-          center={this.props.centerPoint || {lng: 108.55, lat: 34.32}
-          }
-          zoom={this.props.zoom}
-          enableScrollWheelZoom
-        >
-          {this.props.projects.map((item) => {
-            return <CustomOverlay
-              position={new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)}
-              key={item.project_id}
-            >
-              <span
-                style={{display: 'inline-block', width: 40, height: 40, cursor: 'pointer', textAlign: 'center'}}
-                onClick={() => {
-                  this.props.changeActiveProject(item)
-                  this.getPointByProject(item)
-                }}
-              >
-                {this.getMarker(item)}
-              </span>
-            </CustomOverlay>
-          })}
-          <NavigationControl />
-          <ZoomControl />
-        </Map> */}
-      </section>
-
+        </section>
       {/* 工程详情 */}
       {
         this.state.activeProject &&
@@ -64,7 +36,6 @@ class ProjectMap extends React.Component {
           <header className='info-header'>
             <span className='info-name'>{this.state.activeProject.name}</span>
             <i className='iconfont icon-guanbi1' onClick={() => {
-              // this.props.changeActiveProject(null)
               this.setState({
                 activeProject: null
               })
@@ -131,8 +102,7 @@ class ProjectMap extends React.Component {
       marker.addEventListener("click", () => { 
         this.setState({
           activeProject: item
-        })  
-        // this.props.changeActiveProject(item)
+        })
         this.getPointByProject(item)
       });
     }
