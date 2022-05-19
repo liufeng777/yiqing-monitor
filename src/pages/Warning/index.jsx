@@ -207,6 +207,7 @@ class WarningPage extends React.Component {
               </Tooltip>
             </li>
           </ul>
+          <section className='table-box'>
           <Table
             size="small"
             bordered
@@ -265,6 +266,7 @@ class WarningPage extends React.Component {
               )}
             />}
           </Table>
+          </section>
           <Pagination
             defaultCurrent={1}
             current={this.state.currentPage}

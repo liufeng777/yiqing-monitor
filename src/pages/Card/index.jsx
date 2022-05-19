@@ -142,6 +142,7 @@ export default class CardPage extends React.Component {
               </Tooltip>
             </li>
           </ul>
+          <section className='table-box'>
           <Table
             size="small"
             bordered
@@ -198,6 +199,7 @@ export default class CardPage extends React.Component {
               )}
             />
           </Table>
+          </section>
           <Pagination
             defaultCurrent={this.state.currentPage}
             pageSize={this.state.pageSize}

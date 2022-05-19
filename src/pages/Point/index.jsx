@@ -213,13 +213,15 @@ class PointPage extends React.Component {
               </Tooltip>
             </li>
           </ul>
+          <section className='table-box'>
           <Table
             size="small"
             bordered
             dataSource={this.state.tableData}
             rowKey={r => r.point_id}
             pagination={false}
-            scroll={{x: 1500}}
+            // scroll={{x: 1500}}
+            style={{minWidth: 1500}}
             rowSelection={{
               onChange: (keys) => {
                 this.setState({
@@ -306,6 +308,7 @@ class PointPage extends React.Component {
               )}
             />
           </Table>
+          </section>
           <Pagination
             defaultCurrent={this.state.currentPage}
             pageSize={this.state.pageSize}

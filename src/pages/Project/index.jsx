@@ -145,13 +145,15 @@ class ProjectPage extends React.Component {
               </Tooltip>
             </li>
           </ul>
+          <section className='table-box'>
           <Table
             size="small"
             dataSource={this.state.tableData}
             rowKey={r => r.project_id}
             pagination={false}
-            scroll={{x: 1800}}
+            // scroll={{x: 1800}}
             bordered
+            style={{minWidth: 1800}}
           >
             <Table.Column title="工程名" dataIndex="name" key="name" />
             <Table.Column title="区域" dataIndex="area_name" key="area_name"
@@ -161,7 +163,7 @@ class ProjectPage extends React.Component {
             <Table.Column title="状态" min-width="80px" dataIndex="state" key="state"
               render={(val, _) => (<span>{projectState[val]}</span>)}
             />
-            <Table.Column title="图片" width={60} dataIndex="image_path" key="image_path" render={(val, _) => 
+            <Table.Column title="图片" width={80} dataIndex="image_path" key="image_path" render={(val, _) => 
               val ? 
               (<img alt="" src={window.globalData.host + val} style={{width: 60, height: 60}} />) : <></>
               }
@@ -182,7 +184,7 @@ class ProjectPage extends React.Component {
             </Table.ColumnGroup>
             <Table.Column title="开工日期" dataIndex="build_timestamp" key="build_timestamp"
               render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}/>
-            {adminRole > 1 && <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
+            {adminRole > 1 && <Table.Column title="操作" width="150px" dataIndex="operation" key="operation"
               render={(_, record) => (
                 <>
                   <Tooltip title="修改">
@@ -211,6 +213,7 @@ class ProjectPage extends React.Component {
               )}
             />}
           </Table>
+          </section>
           <Pagination
             defaultCurrent={this.state.currentPage}
             pageSize={this.state.pageSize}
