@@ -20,7 +20,7 @@ import * as actions from '../../store/action';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { styleJson } from '../../assets/js/constant';
+// import { styleJson } from '../../assets/js/constant';
 
 echarts.use(
   [ // 饼图
@@ -508,62 +508,62 @@ class HomePage extends React.Component {
     }
   }
 
-  // renderMap = (zoom, projects) => {
-  //   // 地图初始化应该在地图容器div已经添加到DOM树之后
-  //   const center = [this.props.areaPoint?.lng || 108.55, this.props.areaPoint?.lat || 34.32]
-  //   const map = new window.AMap.Map('project-map-container', {
-  //     zoom,
-  //     center, //中心点坐标
-  //     mapStyle: 'amap://styles/darkblue',
-  //   })
-
-  //   for (const item of projects) {
-  //       const img = this.getMarkerImg(item)
-
-  //       const marker = new window.AMap.Marker({
-  //           icon: require(`../../assets/image/${img}`),
-  //           position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
-  //           offset: new window.AMap.Pixel(-17, -42) // 相对于基点的偏移位置
-  //       });
-
-  //       map.add(marker);
-  //       marker.on("click", () => { 
-  //         this.setState({
-  //           activeProject: item
-  //         })  
-  //         this.getPointByProject(item)
-  //       });
-  //     }
-  // }
-
   renderMap = (zoom, projects) => {
-    const map = new window.BMapGL.Map("project-map-container");
-    // 中心点
-    const centerPoint =
-    new window.BMapGL.Point(this.props.areaPoint?.lng || 108.55, this.props.areaPoint?.lat || 34.32);
-    map.centerAndZoom(centerPoint, zoom);
-
-    const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
-    map.addControl(zoomCtrl);
-
-    map.setMapStyleV2({styleJson: styleJson});
+    // 地图初始化应该在地图容器div已经添加到DOM树之后
+    const center = [this.props.areaPoint?.lng || 108.55, this.props.areaPoint?.lat || 34.32]
+    const map = new window.AMap.Map('project-map-container', {
+      zoom,
+      center, //中心点坐标
+      mapStyle: 'amap://styles/darkblue',
+    })
 
     for (const item of projects) {
-      const img = this.getMarkerImg(item)
-      const myIcon = new window.BMapGL.Icon(require(`../../assets/image/${img}`), new window.BMapGL.Size(40, 40));     
-      // 创建标注对象并添加到地图  
-      const point = new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)
-      const marker = new window.BMapGL.Marker(point, {icon: myIcon});   
-      map.addOverlay(marker);
+        const img = this.getMarkerImg(item)
 
-      marker.addEventListener("click", () => { 
-        this.setState({
-          activeProject: item
-        })
-        this.getPointByProject(item)
-      });
-    }
+        const marker = new window.AMap.Marker({
+            icon: require(`../../assets/image/${img}`),
+            position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
+            // offset: new window.AMap.Pixel(-17, -42) // 相对于基点的偏移位置
+        });
+
+        map.add(marker);
+        marker.on("click", () => { 
+          this.setState({
+            activeProject: item
+          })  
+          this.getPointByProject(item)
+        });
+      }
   }
+
+  // renderMap = (zoom, projects) => {
+  //   const map = new window.BMapGL.Map("project-map-container");
+  //   // 中心点
+  //   const centerPoint =
+  //   new window.BMapGL.Point(this.props.areaPoint?.lng || 108.55, this.props.areaPoint?.lat || 34.32);
+  //   map.centerAndZoom(centerPoint, zoom);
+
+  //   const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
+  //   map.addControl(zoomCtrl);
+
+  //   map.setMapStyleV2({styleJson: styleJson});
+
+  //   for (const item of projects) {
+  //     const img = this.getMarkerImg(item)
+  //     const myIcon = new window.BMapGL.Icon(require(`../../assets/image/${img}`), new window.BMapGL.Size(40, 40));     
+  //     // 创建标注对象并添加到地图  
+  //     const point = new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)
+  //     const marker = new window.BMapGL.Marker(point, {icon: myIcon});   
+  //     map.addOverlay(marker);
+
+  //     marker.addEventListener("click", () => { 
+  //       this.setState({
+  //         activeProject: item
+  //       })
+  //       this.getPointByProject(item)
+  //     });
+  //   }
+  // }
 
   // 根据工程获取布点
   getPointByProject = async (item) => {

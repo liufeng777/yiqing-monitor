@@ -86,44 +86,43 @@ export default class PointMap extends React.Component {
   }
 
   renderMap = (points, project) => {
-    // const centerPoint = project ? [project.longitude / 1000000, project.latitude / 1000000
-    // ] : [108.55, 34.32]
-    // const map = new window.AMap.Map('point-map-container', {
-    //   zoom: 18,
-    //   center: centerPoint,
-    // })
+    const centerPoint = project ? [project.longitude / 1000000, project.latitude / 1000000
+    ] : [108.55, 34.32]
+    const map = new window.AMap.Map('point-map-container', {
+      zoom: 18,
+      center: centerPoint,
+    })
 
-    // for (const item of points) {
-    //   const marker = new window.AMap.Marker({
-    //       icon: require(`../../../assets/image/green.png`),
-    //       position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
-    //       offset: new window.AMap.Pixel(-17, -42) // 相对于基点的偏移位置
-    //   });
-
-    //   map.add(marker);
-    //   marker.on("click", () => { 
-    //     this.getPointInfo(item.point_id)
-    //   });
-    // }
-
-    const centerPoint = new window.BMapGL.Point(project ? project.longitude / 1000000 : 108.55, project ? project.latitude / 1000000 : 34.32);
-    const map = new window.BMapGL.Map("point-map-container");
-    map.centerAndZoom(centerPoint, 18);
-
-    const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
-    map.addControl(zoomCtrl);
-    
     for (const item of points) {
-      const myIcon = new window.BMapGL.Icon(require(`../../../assets/image/green.png`), new window.BMapGL.Size(40, 40));     
-      // 创建标注对象并添加到地图  
-      const point = new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)
-      const marker = new window.BMapGL.Marker(point, {icon: myIcon});   
-      map.addOverlay(marker);
+      const marker = new window.AMap.Marker({
+          icon: require(`../../../assets/image/green.png`),
+          position:  [item.longitude / 1000000, item.latitude / 1000000], // 基点位置
+      });
 
-      marker.addEventListener("click", () => { 
+      map.add(marker);
+      marker.on("click", () => { 
         this.getPointInfo(item.point_id)
       });
     }
+
+    // const centerPoint = new window.BMapGL.Point(project ? project.longitude / 1000000 : 108.55, project ? project.latitude / 1000000 : 34.32);
+    // const map = new window.BMapGL.Map("point-map-container");
+    // map.centerAndZoom(centerPoint, 18);
+
+    // const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
+    // map.addControl(zoomCtrl);
+    
+    // for (const item of points) {
+    //   const myIcon = new window.BMapGL.Icon(require(`../../../assets/image/green.png`), new window.BMapGL.Size(40, 40));     
+    //   // 创建标注对象并添加到地图  
+    //   const point = new window.BMapGL.Point(item.longitude / 1000000, item.latitude / 1000000)
+    //   const marker = new window.BMapGL.Marker(point, {icon: myIcon});   
+    //   map.addOverlay(marker);
+
+    //   marker.addEventListener("click", () => { 
+    //     this.getPointInfo(item.point_id)
+    //   });
+    // }
   }
 
   // 根据工程获取布点

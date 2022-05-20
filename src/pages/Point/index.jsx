@@ -33,7 +33,8 @@ class PointPage extends React.Component {
       detail: null,
       selectedKeys: [],
       // 搜索
-      proj_keyword: this.props.projId || '',
+      proj_keyword: '',
+      project_id: this.props.projId || '',
       point_keyword: '',
       state: '',
       device_code: '',
@@ -391,6 +392,7 @@ class PointPage extends React.Component {
       get_count: this.state.pageSize,
       start_index: (this.state.currentPage - 1) * this.state.pageSize,
       proj_keyword: this.state.proj_keyword,
+      project_id: this.state.project_id,
       point_keyword: this.state.point_keyword,
       state: this.state.state,
       device_code: this.state.device_code,
@@ -443,6 +445,7 @@ class PointPage extends React.Component {
     const res = await pointExport({
       ignoreResCode: true,
       proj_keyword: this.state.proj_keyword,
+      project_id: this.state.project_id,
       user_keyword: this.state.user_keyword,
       area_code: this.state.area_code,
     })
