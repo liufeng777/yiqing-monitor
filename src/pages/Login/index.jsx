@@ -137,6 +137,10 @@ class LoginPage extends React.Component {
             </Form.Item>
           </Form>
         </section>
+
+        <section className='record-number'>
+          <a href=" " target="_blank">浙ICP备2021027123号</a >
+        </section>
       </section>
     )
   }
