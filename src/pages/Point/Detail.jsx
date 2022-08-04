@@ -77,6 +77,10 @@ export const PointDetail = (props) => {
           }}
           />
         </Form.Item>
+        {(props.detail || props.project_id) ?
+        <Form.Item label="所属工程" name="project_name">
+          <Input value={props.detail.project_name} disabled />
+        </Form.Item> :
         <Form.Item label="所属工程" name="project_id"
           rules={[{ required: true, message: '请选择所属工程' }]}
         >
@@ -134,6 +138,7 @@ export const PointDetail = (props) => {
             }
           </Select>
         </Form.Item>
+        }
         <Form.Item label="设备编码" name="device_code">
           <Input maxLength={16} value={detail.device_code} onChange={(e) => {
             setDetail({

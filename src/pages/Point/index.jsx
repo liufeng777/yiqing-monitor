@@ -293,6 +293,7 @@ class PointPage extends React.Component {
                         detail: {
                           point_id: record.point_id,
                           project_id: record.project_id,
+                          project_name: record.project_name,
                           name: record.name,
                           tag: record.tag,
                           state: record.state,
