@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Select, Button, Modal, Divider } from 'antd';
+import { Form, Select, Button, Modal, Divider, Input } from 'antd';
 import { warningType, confirmRes } from '../../assets/js/constant';
 import { DateAndTime } from '../Card/DateAndTime';
 import { userList, pointList } from '../../api';
@@ -58,6 +58,13 @@ export const WarningDetail = (props) => {
           start_index: (userCurrentPage - 1) * 10,
         })
         if (userRes) {
+          const userArr = userRes.records;
+          if (props.detail.confirm_user_id && !userArr.find(v => v.id === props.detail.confirm_user_id)) {
+            userArr.push({
+              id: props.detail.confirm_user_id,
+              name: props.detail.confirm_user_name
+            })
+          }
           setUsers(userRes.records);
           setUserTotal(userRes.total_count);
         }
@@ -82,7 +89,11 @@ export const WarningDetail = (props) => {
       form={form}
       initialValues={initialValues}
       >
-        <Form.Item label="布点" name="point_id"
+        {props.detail ?
+          <Form.Item label="布点" name="point_name">
+            <Input value={props.detail.point_name} disabled />
+          </Form.Item> :
+          <Form.Item label="布点" name="point_id"
           rules={[{ required: true, message: '请输入布点' }]}
         >
           <Select value={detail.point_id + ''} disabled={props.detail}
@@ -137,7 +148,8 @@ export const WarningDetail = (props) => {
               })
             }
           </Select>
-        </Form.Item>
+          </Form.Item>
+        }
         <Form.Item label="报警类型" name="warn_type" rules={[{ required: true }]}>
           <Select value={detail.warn_type + ''} onChange={(val) => {
             setDetail({

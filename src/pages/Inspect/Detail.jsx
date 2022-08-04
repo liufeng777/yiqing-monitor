@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Select, Button, Modal, Divider, message } from 'antd';
+import { Form, Select, Button, Modal, Divider, message, Input } from 'antd';
 import { warnType, inspectResult, measureType } from '../../assets/js/constant';
 import { DateAndTime } from '../Card/DateAndTime';
 import { projectUserList, pointListSimple, warningListByPoint, projectListSimple } from '../../api';
@@ -131,7 +131,14 @@ export const InspectDetail = (props) => {
             project_id: +props.detail.project_id
           })
           if (userRes) {
-            setUsers(userRes.records);
+            const userArr = userRes.records;
+            if (props.detail.user_id && !userArr.find(v => v.id === props.detail.user_id)) {
+              userArr.push({
+                id: props.detail.user_id,
+                name: props.detail.user_name
+              })
+            }
+            setUsers(userArr);
             setUserTotal(userRes.total_count);
           }
         }
@@ -157,132 +164,142 @@ export const InspectDetail = (props) => {
       form={form}
       initialValues={initialValues}
       >
-        <Form.Item label="工程" name="project_id"
-          rules={[{ required: true, message: '请选择工程' }]}
-        >
-          <Select
-            showSearch
-            filterOption={false}
-            onSearch={debounce(500, (val) => {
-              setProjectKeywords(val)
-              getProjects(val, 1)
-            })}
-            onFocus={() => {
-              if (projectKeywords) {
-                setProjectKeywords('')
-                getProjects('', 1)
-              }
-            }}
-            value={detail.project_id + ''}
-            disabled={props.detail}
-            onChange={async (val) => {
-              setDetail({
-                ...detail,
-                project_id: +val,
-                point_id: '',
-                warn_id: '',
-                user_id: ''
-              })
-              setWarnings([]);
-              setWarningCurrentPage(1);
-              setWarningTotal(0)
-
-              // 重新获取points
-              getPoints('', 1, +val)
-
-              // 重新获取users
-              const userRes = await projectUserList({
-                get_count: 10,
-                start_index: 0,
-                project_id: +val
-              })
-              if (userRes) {
-                setUsers(userRes.records);
-                setUserTotal(userRes.total_count);
-                setUserCurrentPage(1)
-              }
-            }}
-            dropdownRender={(menu) => (
-              <section>
-                {menu}
-                <Divider style={{ margin: '4px 0' }} />
-                <section style={{textAlign: 'right'}}>
-                  <Button type="link" disabled={projectCurrentPage === 1}
-                    onClick={throttle(1000, async () => {
-                      const page = projectCurrentPage - 1;
-                      getProjects(projectKeywords, page)
-                    })}
-                  >上一页</Button>
-                  <Button type="link" disabled={projectCurrentPage * 10 >= projectTotal}
-                    onClick={throttle(1000, async () => {
-                      const page = projectCurrentPage + 1;
-                      getProjects(projectKeywords, page)
-                    })}
-                  >下一页</Button>
-                </section>
-              </section>
-            )}
+        {props.detail ?
+          <Form.Item label="工程" name="project_name">
+            <Input value={props.detail.project_name} disabled />
+          </Form.Item>:
+          <Form.Item label="工程" name="project_id"
+            rules={[{ required: true, message: '请选择工程' }]}
           >
-            {
-              projects.map((item) => {
-                return <Option key={item.project_id} value={item.project_id + ''}>{item.name}</Option>
-              })
-            }
-          </Select>
-        </Form.Item>
-        <Form.Item label="布点" name="point_id"
-          rules={[{ required: true, message: '请选择布点' }]}
-        >
-          <Select value={detail.point_id + ''} disabled={props.detail}
-            showSearch
-            filterOption={false}
-            onSearch={debounce(500, (val) => {
-              setPointKeyword(val)
-              getPoints(val, 1, detail.project_id)
-            })}
-            onFocus={() => {
-              if (pointKeyword) {
-                setPointKeyword('')
-                getPoints('', 1, detail.project_id)
-              }
-            }}
-            onChange={async (val) => {
-              setDetail({
-                ...detail,
-                point_id: +val,
-                warn_id: ''
-              })
-              // 重新获取warns
-              getWarns(1, +val)
-            }}
-            dropdownRender={(menu) => (
-              <section>
-                {menu}
-                <Divider style={{ margin: '4px 0' }} />
-                <section style={{textAlign: 'right'}}>
-                  <Button type="link" disabled={pointCurrentPage === 1}
-                    onClick={throttle(1000, async () => {
-                      const page = pointCurrentPage - 1;
-                      getPoints(pointKeyword, page, detail.project_id)
-                    })}
-                  >上一页</Button>
-                  <Button type="link" disabled={pointCurrentPage * 10 >= pointTotal}
-                    onClick={throttle(1000, async () => {
-                      const page = pointCurrentPage + 1;
-                      getPoints(pointKeyword, page, detail.project_id)
-                    })}
-                  >下一页</Button>
+            <Select
+              showSearch
+              filterOption={false}
+              onSearch={debounce(500, (val) => {
+                setProjectKeywords(val)
+                getProjects(val, 1)
+              })}
+              onFocus={() => {
+                if (projectKeywords) {
+                  setProjectKeywords('')
+                  getProjects('', 1)
+                }
+              }}
+              value={detail.project_id + ''}
+              disabled={props.detail}
+              onChange={async (val) => {
+                setDetail({
+                  ...detail,
+                  project_id: +val,
+                  point_id: '',
+                  warn_id: '',
+                  user_id: ''
+                })
+                setWarnings([]);
+                setWarningCurrentPage(1);
+                setWarningTotal(0)
+
+                // 重新获取points
+                getPoints('', 1, +val)
+
+                // 重新获取users
+                const userRes = await projectUserList({
+                  get_count: 10,
+                  start_index: 0,
+                  project_id: +val
+                })
+                if (userRes) {
+                  setUsers(userRes.records);
+                  setUserTotal(userRes.total_count);
+                  setUserCurrentPage(1)
+                }
+              }}
+              dropdownRender={(menu) => (
+                <section>
+                  {menu}
+                  <Divider style={{ margin: '4px 0' }} />
+                  <section style={{textAlign: 'right'}}>
+                    <Button type="link" disabled={projectCurrentPage === 1}
+                      onClick={throttle(1000, async () => {
+                        const page = projectCurrentPage - 1;
+                        getProjects(projectKeywords, page)
+                      })}
+                    >上一页</Button>
+                    <Button type="link" disabled={projectCurrentPage * 10 >= projectTotal}
+                      onClick={throttle(1000, async () => {
+                        const page = projectCurrentPage + 1;
+                        getProjects(projectKeywords, page)
+                      })}
+                    >下一页</Button>
+                  </section>
                 </section>
-              </section>
-            )}
+              )}
+            >
+              {
+                projects.map((item) => {
+                  return <Option key={item.project_id} value={item.project_id + ''}>{item.name}</Option>
+                })
+              }
+            </Select>
+          </Form.Item>
+        }
+        {props.detail ?
+          <Form.Item label="布点" name="point_name">
+            <Input value={props.detail.point_name} disabled />
+          </Form.Item>:
+          <Form.Item label="布点" name="point_id"
+            rules={[{ required: true, message: '请选择布点' }]}
           >
-            {
-              points.map((item) => {
-                return <Option key={item.point_id} value={item.point_id + ''}>{item.name}</Option>
-              })
-            }
-          </Select>
-        </Form.Item>
+            <Select value={detail.point_id + ''} disabled={props.detail}
+              showSearch
+              filterOption={false}
+              onSearch={debounce(500, (val) => {
+                setPointKeyword(val)
+                getPoints(val, 1, detail.project_id)
+              })}
+              onFocus={() => {
+                if (pointKeyword) {
+                  setPointKeyword('')
+                  getPoints('', 1, detail.project_id)
+                }
+              }}
+              onChange={async (val) => {
+                setDetail({
+                  ...detail,
+                  point_id: +val,
+                  warn_id: ''
+                })
+                // 重新获取warns
+                getWarns(1, +val)
+              }}
+              dropdownRender={(menu) => (
+                <section>
+                  {menu}
+                  <Divider style={{ margin: '4px 0' }} />
+                  <section style={{textAlign: 'right'}}>
+                    <Button type="link" disabled={pointCurrentPage === 1}
+                      onClick={throttle(1000, async () => {
+                        const page = pointCurrentPage - 1;
+                        getPoints(pointKeyword, page, detail.project_id)
+                      })}
+                    >上一页</Button>
+                    <Button type="link" disabled={pointCurrentPage * 10 >= pointTotal}
+                      onClick={throttle(1000, async () => {
+                        const page = pointCurrentPage + 1;
+                        getPoints(pointKeyword, page, detail.project_id)
+                      })}
+                    >下一页</Button>
+                  </section>
+                </section>
+              )}
+            >
+              {
+                points.map((item) => {
+                  return <Option key={item.point_id} value={item.point_id + ''}>{item.name}</Option>
+                })
+              }
+            </Select>
+          </Form.Item>
+        }
         <Form.Item label="报警" name="warn_id">
           <Select value={detail.warn_id + ''} disabled={props.detail}
             onChange={(val) => {

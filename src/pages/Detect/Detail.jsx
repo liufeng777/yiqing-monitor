@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Select, Button, Modal, Divider } from 'antd';
+import { Form, Select, Button, Modal, Divider, Input } from 'antd';
 import { warnType } from '../../assets/js/constant';
 import { DateAndTime } from '../Card/DateAndTime';
 import { projectUserList, pointListSimple, projectListSimple } from '../../api';
@@ -95,7 +95,14 @@ export const DetectDetail = (props) => {
             project_id: +props.detail.project_id
           })
           if (userRes) {
-            setUsers(userRes.records);
+            const userArr = userRes.records;
+            if (props.detail.user_id && !userArr.find(v => v.id === props.detail.user_id)) {
+              userArr.push({
+                id: props.detail.user_id,
+                name: props.detail.user_name
+              })
+            }
+            setUsers(userArr);
             setUserTotal(userRes.total_count);
           }
         }
@@ -120,7 +127,11 @@ export const DetectDetail = (props) => {
       form={form}
       initialValues={initialValues}
       >
-        <Form.Item label="工程" name="project_id"
+        {props.detail ?
+          <Form.Item label="工程" name="project_name">
+            <Input value={props.detail.project_name} disabled />
+          </Form.Item> :
+          <Form.Item label="工程" name="project_id"
           rules={[{ required: true, message: '请选择工程' }]}
         >
           <Select value={detail.project_id + ''} disabled={props.detail}
@@ -187,7 +198,12 @@ export const DetectDetail = (props) => {
             }
           </Select>
         </Form.Item>
-        <Form.Item label="布点" name="point_id"
+        }
+        {props.detail ?
+          <Form.Item label="布点" name="point_name">
+            <Input value={props.detail.point_name} disabled />
+          </Form.Item> :
+          <Form.Item label="布点" name="point_id"
           rules={[{ required: true, message: '请输入布点' }]}
         >
           <Select value={detail.point_id + ''} disabled={props.detail}
@@ -237,6 +253,7 @@ export const DetectDetail = (props) => {
             }
           </Select>
         </Form.Item>
+        }
         <Form.Item label="执行用户" name="user_id">
           <Select value={detail.user_id + ''}
             onChange={(val) => {
