@@ -91,7 +91,15 @@ export default class PointMap extends React.Component {
     const map = new window.AMap.Map('point-map-container', {
       zoom: 18,
       center: centerPoint,
-    })
+    });
+
+    map.plugin(["AMap.MapType"],function() {
+      //地图类型切换
+      const type= new window.AMap.MapType({
+        defaultType: 0
+      });
+      map.addControl(type);
+  });
 
     for (const item of points) {
       const marker = new window.AMap.Marker({

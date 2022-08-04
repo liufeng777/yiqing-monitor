@@ -517,6 +517,15 @@ class HomePage extends React.Component {
       mapStyle: 'amap://styles/darkblue',
     })
 
+    map.plugin(["AMap.MapType"],function() {
+      //地图类型切换
+      const type= new window.AMap.MapType({
+        defaultType: 0
+      });
+      map.addControl(type);
+  });
+  
+
     for (const item of projects) {
         const img = this.getMarkerImg(item)
 
