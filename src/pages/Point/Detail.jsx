@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Modal, Divider } from 'antd';
 import { pointState } from '../../assets/js/constant';
-import { projectList } from '../../api';
-import { throttle } from 'throttle-debounce';
+import { projectListSimple } from '../../api';
+import { throttle, debounce } from 'throttle-debounce';
 
 const { Option } = Select;
 
@@ -18,6 +18,7 @@ const defaultDetail = {
 export const PointDetail = (props) => {
   const [detail, setDetail] = useState(defaultDetail);
   const [projects, setProjects] = useState([]);
+  const [projectKeywords, setProjectKeywords] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -29,6 +30,21 @@ export const PointDetail = (props) => {
   }
   form.setFieldsValue(initialValues)
 
+  // 获取project
+  const getProjects = async (keyword, page) => {
+    const projectRes = await projectListSimple({
+      get_count: 10,
+      start_index: (page - 1) * 10,
+      area_code: +sessionStorage.getItem('areaCode') || 0,
+      proj_keyword: keyword
+    })
+    if (projectRes) {
+      setProjects(projectRes.records);
+      setTotal(projectRes.total_count);
+      setCurrentPage(1)
+    }
+  }
+
   useEffect(() => {
     async function fetchData () {
       if (props.visible) {
@@ -36,15 +52,8 @@ export const PointDetail = (props) => {
           ...defaultDetail,
           project_id: props.project_id
         });
-        const res = await projectList({
-          get_count: 10,
-          start_index: (currentPage - 1) * 10,
-          area_code: +sessionStorage.getItem('areaCode') || 0,
-        })
-        if (res) {
-          setProjects(res.records);
-          setTotal(res.total_count);
-        }
+        setProjectKeywords('');
+        getProjects('', 1)
       }
     }
     fetchData()
@@ -84,7 +93,21 @@ export const PointDetail = (props) => {
         <Form.Item label="所属工程" name="project_id"
           rules={[{ required: true, message: '请选择所属工程' }]}
         >
-          <Select value={(props.project_id || detail.project_id)} disabled={props.detail || props.project_id}
+          <Select
+            showSearch
+            filterOption={false}
+            onSearch={debounce(500, (val) => {
+              setProjectKeywords(val)
+              getProjects(val, 1)
+            })}
+            onFocus={() => {
+              if (projectKeywords) {
+                setProjectKeywords('')
+                getProjects('', 1)
+              }
+            }}
+            value={(props.project_id || detail.project_id)}
+            disabled={props.detail || props.project_id}
             onChange={(val) => {
               setDetail({
                 ...detail,
@@ -99,31 +122,14 @@ export const PointDetail = (props) => {
                   <Button type="link" disabled={currentPage === 1}
                     onClick={throttle(1000, async () => {
                       const page = currentPage - 1;
-                      const res = await projectList({
-                        get_count: 10,
-                        start_index: (page - 1) * 10,
-                        area_code: +sessionStorage.getItem('areaCode') || 0,
-                      })
-                      if (res) {
-                        setProjects(res.records);
-                        setTotal(res.total_count);
-                        setCurrentPage(page);
-                      }
+                      getProjects(projectKeywords, page)
+                      
                     })}
                   >上一页</Button>
                   <Button type="link" disabled={currentPage * 10 >= total}
                     onClick={throttle(1000, async () => {
                       const page = currentPage + 1;
-                      const res = await projectList({
-                        get_count: 10,
-                        start_index: (page - 1) * 10,
-                        area_code: +sessionStorage.getItem('areaCode') || 0,
-                      })
-                      if (res) {
-                        setProjects(res.records);
-                        setTotal(res.total_count);
-                        setCurrentPage(page);
-                      }
+                        getProjects(projectKeywords, page)
                     })}
                   >下一页</Button>
                 </section>
