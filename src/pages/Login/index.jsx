@@ -139,7 +139,7 @@ class LoginPage extends React.Component {
         </section>
 
         <section className='record-number'>
-          <a href=" " target="_blank">浙ICP备2021027123号</a >
+        < a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">浙ICP备2021027123号</ a>
         </section>
       </section>
     )

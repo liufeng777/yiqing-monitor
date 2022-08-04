@@ -68,7 +68,7 @@ export const detectImport = (data) => axios('detect/import', data)
 /**
  * inspect(检查)
  */
-export const inspectAdd = data => axios('inspect', data)
+export const inspectAdd = data => axios('inspect', data, 'POST', 'multipart/form-data')
 export const inspectList = data => axios('inspect/list', data)
 export const inspectBatchDelete = (ids, data) => axios(`inspect/batch/[${ids}]`, data, 'DELETE')
 export const inspectGet = (id, data) => axios(`inspect/${id}`, data, 'GET')

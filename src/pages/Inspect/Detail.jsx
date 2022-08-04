@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Select, Button, Modal, Divider } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Form, Select, Button, Modal, Divider, message } from 'antd';
 import { warnType, inspectResult, measureType } from '../../assets/js/constant';
 import { DateAndTime } from '../Card/DateAndTime';
 import { projectUserList, pointListSimple, warningListByPoint, projectListSimple } from '../../api';
 import { throttle, debounce } from 'throttle-debounce';
+
+const imgType = ['image/jpg', 'image/jpeg', 'image/png'];
 
 const { Option } = Select;
 
@@ -15,12 +17,17 @@ const defaultDetail = {
   user_id: '',
   done_timestamp: 0,
   state: '',
-  measure_type: ''
+  measure_type: '',
+  image_file: '',
+  image_path: ''
 }
 
 export const InspectDetail = (props) => {
   const [detail, setDetail] = useState(defaultDetail);
+  const [imgUrl, setImgUrl] = useState('');
   const [form] = Form.useForm();
+
+  const fileInput = useRef();
 
   // projectList
   const [projects, setProjects] = useState([]);
@@ -130,6 +137,7 @@ export const InspectDetail = (props) => {
         }
       }
     }
+    setImgUrl(props.detail?.image_path ? window.globalData.host + props.detail?.image_path : '');
     fetchData()
   }, [props.visible]);
 
@@ -408,6 +416,29 @@ export const InspectDetail = (props) => {
           </Form.Item>
           </>
         }
+        <Form.Item label="图片" name="image_file">
+          <div className="upload-image">
+            {
+              imgUrl ? <img
+                alt=""
+                src={imgUrl}
+                style={{width: '100%', height: '100%'}}
+                       /> : <span onClick={throttle(1000, () => fileInput.current.click())}>上传图片</span>
+            }
+            {imgUrl && <section className="img-masker">
+              <i className="iconfont icon-xiugai" onClick={throttle(1000, () => fileInput.current.click())} />
+              <i className="iconfont icon-shanchu" onClick={throttle(1000, () => {
+                setImgUrl('');
+                setDetail({
+                  ...detail,
+                  image_file: '',
+                  image_path: ''
+                })
+              })}
+              />
+            </section>}
+          </div>
+        </Form.Item>
         <Form.Item>
           <section className="form-btn">
             <Button type="primary" htmlType="submit">
@@ -423,6 +454,37 @@ export const InspectDetail = (props) => {
           </section>
         </Form.Item>
       </Form>
+
+      {/* 上传图片的input */}
+      <input
+        type="file"
+        ref={r => fileInput.current = r}
+        style={{display: 'none'}}
+        id="upload-file"
+        accept={imgType.toString()}
+        onClick={throttle(1000, (e) => {
+          e.target.value = ''
+        })}
+        onChange={e => {
+          const file = e.target.files[0];
+
+          if (!imgType.includes(file.type)) {
+            message.warning(`请上传${imgType.join('、')}格式的图片`);
+            return;
+          }
+
+          setDetail({
+            ...detail,
+            image_file: file
+          })
+          
+          const fr = new FileReader();
+          fr.readAsDataURL(file);
+          fr.onload = async (r) => {
+            setImgUrl(r.target.result)
+          }
+        }}
+      />
     </Modal>
   )
 }

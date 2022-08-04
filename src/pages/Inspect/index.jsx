@@ -262,8 +262,11 @@ class InspectPage extends React.Component {
             <Table.Column title="蚁量" dataIndex="termite_amount" key="termite_amount"
               render={(val, _) => (<span>{termiteAmount[val]}</span>)}
             />
-            {/* <Table.Column title="备注信息" dataIndex="comment" key="comment"/>
-            <Table.Column title="图片文件" dataIndex="image_file" key="image_file"/> */}
+            <Table.Column title="图片" width={80} dataIndex="image_path" key="image_path" render={(val, _) => 
+              val ? 
+              (<img alt="" src={window.globalData.host + val} style={{width: 60, height: 60}} />) : <></>
+              }
+            />
             <Table.Column title="操作" width="100px" dataIndex="operation" key="operation"
               render={(_, record) => (
                 <>
