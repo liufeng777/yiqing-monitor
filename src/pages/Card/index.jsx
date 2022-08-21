@@ -3,13 +3,13 @@ import { Table, Pagination, Input, Tooltip, Modal, Button, message, Tag, Select 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { cardType, cardState } from '../../assets/js/constant';
 import { CardDetail } from './Detail';
-import { getDateTime } from './DateAndTime';
+import { getDateTime, DateAndTime } from './DateAndTime';
 import { throttle } from 'throttle-debounce';
 import './index.less';
 import CacheTags from '../../component/CacheTags';
 
 // api
-import { cardList, cardBatchDelete, cardAdd, cardChange, cardExport } from '../../api';
+import { cardList, cardBatchDelete, cardAdd, cardChange, cardExport, cardImport } from '../../api';
 
 const { Option } = Select;
 
@@ -28,9 +28,15 @@ export default class CardPage extends React.Component {
       // 搜索
       keyword: '',
       type: '',
-      state: ''
+      state: '',
+      proj_keyword: '',
+      point_keyword: '',
+      begin_timestamp: 0,
+      end_timestamp: 0
     }
   };
+
+  fileInput
 
   componentDidMount () {
     this.getAll();
@@ -38,7 +44,7 @@ export default class CardPage extends React.Component {
 
   render () {
     return (
-      <section className="admin-page page-view">
+      <section className="card-page page-view">
         <CacheTags />
         <header className="header">
           <span/>
@@ -50,7 +56,7 @@ export default class CardPage extends React.Component {
               <i className="iconfont icon-piliangshanchu1" />
               批量删除
             </Button>
-            <Button className="import-btn header-btn" type="primary">
+            <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
               <i className="iconfont icon-daoru" />
               导入
             </Button>
@@ -72,7 +78,7 @@ export default class CardPage extends React.Component {
           </span>
         </header>
         <section className="body">
-        <ul className="search-box">
+          <ul className="search-box">
             <li>
               <span className="label">通讯卡：</span>
               <Input
@@ -123,6 +129,59 @@ export default class CardPage extends React.Component {
               </Select>
             </li>
             <li>
+              <span className="label l-large">所属工程：</span>
+              <Input
+                value={this.state.proj_keyword}
+                onChange={(e) => {
+                  this.setState({
+                    proj_keyword: e.target.value
+                  })
+                }}
+                allowClear
+                placeholder="名称"
+                onPressEnter={() => {
+                  this.getAll()
+                }}
+                style={{ width: 120 }}
+              />
+            </li>
+            <li>
+              <span className="label l-large">所属布点：</span>
+              <Input
+                value={this.state.point_keyword}
+                onChange={(e) => {
+                  this.setState({
+                    point_keyword: e.target.value
+                  })
+                }}
+                allowClear
+                placeholder="名称"
+                onPressEnter={() => {
+                  this.getAll()
+                }}
+                style={{ width: 120 }}
+              />
+            </li>
+          </ul>
+          <ul className="search-box" style={{borderTop: 'none'}}>
+            <li>
+              <span className="label" style={{width: 320}}>流量包年或包月截止时间(起始)：</span>
+              <DateAndTime value={this.state.begin_timestamp} onChange={(val) => {
+                this.setState({
+                  begin_timestamp: val
+                })
+              }} />
+            </li>
+            <li>
+              <span className="label" style={{width: 160}}>截止时间(结束)：</span>
+              <DateAndTime value={this.state.end_timestamp} onChange={(val) => {
+                this.setState({
+                  end_timestamp: val
+                })
+              }} />
+            </li>
+            
+            <li>
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
                   <i className="iconfont icon-sousuo" />
@@ -156,6 +215,7 @@ export default class CardPage extends React.Component {
                 })
               }
             }}
+            style={{minWidth: 1800}}
           >
             <Table.Column title="通讯卡编码" dataIndex="card_code" key="card_code" />
             <Table.Column title="类型" dataIndex="card_type" key="card_type"
@@ -164,6 +224,9 @@ export default class CardPage extends React.Component {
             <Table.Column title="状态" dataIndex="state" key="state"
               render={(val, _) => (<span>{cardState[val]}</span>)}
             />
+            <Table.Column title="所属工程" dataIndex="project_name" key="project_name" />
+            <Table.Column title="所属布点" dataIndex="point_name" key="point_name" />
+            <Table.Column title="设备编码" dataIndex="device_code" key="device_code" />
             <Table.Column title="标签" dataIndex="tag" key="tag"
               render={(val, _) => (<Tag>{val}</Tag>)}
             />
@@ -239,6 +302,38 @@ export default class CardPage extends React.Component {
           onSubmit={(values) => this.onSubmit(values)}
           detail={this.state.detail}
         />
+
+        {/* 导入csv */}
+        <input
+          type="file"
+          ref={r => this.fileInput = r}
+          style={{display: 'none'}}
+          id="upload-file"
+          accept={"text/csv"}
+          onClick={throttle(1000, (e) => {
+            e.target.value = ''
+          })}
+          onChange={async (e) => {
+            const file = e.target.files[0];
+
+            if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {
+              message.warning(`请上传CSV格式的文件`);
+              return;
+            }
+
+            // 导入数据
+            if (file) {
+              const res = await cardImport({
+                input_file: file
+              });
+              if (res && res.complete_count) {
+                this.getAll()
+              } else {
+                message.error(res.err_msgs?.join('、'))
+              }
+            }
+          }}
+        />
       </section>
     );
   }
@@ -250,7 +345,11 @@ export default class CardPage extends React.Component {
       start_index: (this.state.currentPage - 1) * this.state.pageSize,
       keyword: this.state.keyword,
       type: this.state.type,
-      state: this.state.state
+      state: this.state.state,
+      proj_keyword: this.state.proj_keyword,
+      point_keyword: this.state.point_keyword,
+      begin_timestamp: this.state.begin_timestamp,
+      end_timestamp: this.state.end_timestamp
     });
     if (res) {
       this.setState({
@@ -295,7 +394,22 @@ export default class CardPage extends React.Component {
 
   // 导出数据
   exportData = async () => {
-    const res = await cardExport({});
-    console.log(res)
+    const res = await cardExport({
+      ignoreResCode: true,
+      keyword: this.state.keyword,
+      type: this.state.type,
+      state: this.state.state,
+    })
+
+    const content = "\ufeff" + res;
+    const blob = new Blob([content], { type: 'text/csv, chartset=UTF-8' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.style.display = 'none';
+    a.download = '通讯卡.csv';
+    a.click();
+    URL.revokeObjectURL(a.href)
   }
 };

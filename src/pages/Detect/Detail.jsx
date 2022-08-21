@@ -57,7 +57,7 @@ export const DetectDetail = (props) => {
     if (projectRes) {
       setProjects(projectRes.records);
       setProjectTotal(projectRes.total_count);
-      setProjectCurrentPage(1)
+      setProjectCurrentPage(page)
     }
   }
 

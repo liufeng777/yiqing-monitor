@@ -6,9 +6,10 @@ import { DeviceDetail } from './Detail';
 import { throttle } from 'throttle-debounce';
 import './index.less';
 import CacheTags from '../../component/CacheTags';
+import { getDateTime } from '../Card/DateAndTime';
 
 // api
-import { deviceList, deviceBatchDelete, deviceAdd, deviceChange } from '../../api';
+import { deviceList, deviceBatchDelete, deviceAdd, deviceChange, deviceExport, deviceImport } from '../../api';
 
 const { Option } = Select;
 
@@ -25,11 +26,15 @@ export default class DevicePage extends React.Component {
       detail: null,
       selectedKeys: [],
       // 搜索
+      proj_keyword: '',
+      point_keyword: '',
       keyword: '',
       type: '',
       state: ''
     }
   };
+
+  fileInput
 
   componentDidMount () {
     this.getAll();
@@ -49,11 +54,11 @@ export default class DevicePage extends React.Component {
               <i className="iconfont icon-piliangshanchu1" />
               批量删除
             </Button>
-            <Button className="import-btn header-btn" type="primary">
+            <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
               <i className="iconfont icon-daoru" />
               导入
             </Button>
-            <Button className="export-btn header-btn" type="primary">
+            <Button className="export-btn header-btn" type="primary" onClick={throttle(1000, this.exportData)}>
               <i className="iconfont icon-export" />
               导出
             </Button>
@@ -122,6 +127,40 @@ export default class DevicePage extends React.Component {
               </Select>
             </li>
             <li>
+              <span className="label l-large">所属工程：</span>
+              <Input
+                value={this.state.proj_keyword}
+                onChange={(e) => {
+                  this.setState({
+                    proj_keyword: e.target.value
+                  })
+                }}
+                allowClear
+                placeholder="名称"
+                onPressEnter={() => {
+                  this.getAll()
+                }}
+                style={{ width: 120 }}
+              />
+            </li>
+            <li>
+              <span className="label l-large">所属布点：</span>
+              <Input
+                value={this.state.point_keyword}
+                onChange={(e) => {
+                  this.setState({
+                    point_keyword: e.target.value
+                  })
+                }}
+                allowClear
+                placeholder="名称"
+                onPressEnter={() => {
+                  this.getAll()
+                }}
+                style={{ width: 120 }}
+              />
+            </li>
+            <li>
               <Tooltip title="搜素">
                 <Button shape="circle" type="primary" style={{marginRight: 10}} onClick={throttle(1000, this.getAll)}>
                   <i className="iconfont icon-sousuo" />
@@ -155,15 +194,26 @@ export default class DevicePage extends React.Component {
                 })
               }
             }}
+            style={{minWidth: 1200}}
           >
             <Table.Column title="设备编码" dataIndex="device_code" key="device_code" />
             <Table.Column title="类型" dataIndex="device_type" key="device_type"
               render={(val, _) => (<span>{deviceType[val]}</span>)}
             />
+            <Table.Column title="所属工程" dataIndex="project_name" key="project_name" />
+            <Table.Column title="所属布点" dataIndex="point_name" key="point_name" />
             <Table.Column title="状态" dataIndex="state" key="state"
               render={(val, _) => (<span>{deviceState[val]}</span>)}
             />
-            <Table.Column title="通讯卡" dataIndex="card_code" key="card_code" />
+            <Table.Column title="创建时间" dataIndex="create_timestamp" key="create_timestamp"
+              render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
+            />
+            <Table.ColumnGroup title="通讯卡">
+              <Table.Column title="编码" dataIndex="card_code" key="card_code" />
+              <Table.Column title="到期时间" dataIndex="card_deadtime" key="card_deadtime"
+              render={(val, _) => (<span>{getDateTime(val).join(' ')}</span>)}
+            />
+            </Table.ColumnGroup>
             <Table.Column title="标签" dataIndex="tag" key="tag"
               render={(val, _) => (<Tag>{val}</Tag>)}
             />
@@ -234,6 +284,38 @@ export default class DevicePage extends React.Component {
           onSubmit={(values) => this.onSubmit(values)}
           detail={this.state.detail}
         />
+
+        {/* 导入csv */}
+        <input
+          type="file"
+          ref={r => this.fileInput = r}
+          style={{display: 'none'}}
+          id="upload-file"
+          accept={"text/csv"}
+          onClick={throttle(1000, (e) => {
+            e.target.value = ''
+          })}
+          onChange={async (e) => {
+            const file = e.target.files[0];
+
+            if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {
+              message.warning(`请上传CSV格式的文件`);
+              return;
+            }
+
+            // 导入数据
+            if (file) {
+              const res = await deviceImport({
+                input_file: file
+              });
+              if (res && res.complete_count) {
+                this.getAll()
+              } else {
+                message.error(res.err_msgs?.join('、'))
+              }
+            }
+          }}
+        />
       </section>
     );
   }
@@ -245,7 +327,9 @@ export default class DevicePage extends React.Component {
       start_index: (this.state.currentPage - 1) * this.state.pageSize,
       keyword: this.state.keyword,
       type: this.state.type,
-      state: this.state.state
+      state: this.state.state,
+      proj_keyword: this.state.proj_keyword,
+      point_keyword: this.state.point_keyword
     });
     if (res) {
       this.setState({
@@ -286,5 +370,26 @@ export default class DevicePage extends React.Component {
       message.success(`${this.state.operationType === 'add' ? '添加成功' : '修改成功'}`);
       this.getAll();
     }
+  }
+
+  // 导出数据
+  exportData = async () => {
+    const res = await deviceExport({
+      ignoreResCode: true,
+      keyword: this.state.keyword,
+      type: this.state.type,
+      state: this.state.state,
+    })
+
+    const content = "\ufeff" + res;
+    const blob = new Blob([content], { type: 'text/csv, chartset=UTF-8' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.style.display = 'none';
+    a.download = '设备.csv';
+    a.click();
+    URL.revokeObjectURL(a.href)
   }
 };

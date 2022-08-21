@@ -16,7 +16,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 // api
-import { warningList, warningBatchDelete, warningAdd, warningChange } from '../../api';
+import { warningList, warningBatchDelete, warningAdd, warningChange, warningImport, warningExport } from '../../api';
 
 const { Option } = Select
 
@@ -46,6 +46,8 @@ class WarningPage extends React.Component {
     }
   };
 
+  fileInput
+
   componentDidMount () {
     this.getAll();
   }
@@ -73,11 +75,11 @@ class WarningPage extends React.Component {
               <i className="iconfont icon-piliangshanchu1" />
               批量删除
             </Button>
-            <Button className="import-btn header-btn" type="primary">
+            <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
               <i className="iconfont icon-daoru" />
               导入
             </Button>
-            <Button className="export-btn header-btn" type="primary">
+            <Button className="export-btn header-btn" type="primary" onClick={throttle(1000, this.exportData)}>
               <i className="iconfont icon-export" />
               导出
             </Button>
@@ -318,7 +320,38 @@ class WarningPage extends React.Component {
               showInspect: false
             })
           }}
+        />
 
+        {/* 导入csv */}
+        <input
+          type="file"
+          ref={r => this.fileInput = r}
+          style={{display: 'none'}}
+          id="upload-file"
+          accept={"text/csv"}
+          onClick={throttle(1000, (e) => {
+            e.target.value = ''
+          })}
+          onChange={async (e) => {
+            const file = e.target.files[0];
+
+            if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {
+              message.warning(`请上传CSV格式的文件`);
+              return;
+            }
+
+            // 导入数据
+            if (file) {
+              const res = await warningImport({
+                input_file: file
+              });
+              if (res && res.complete_count) {
+                this.getAll()
+              } else {
+                message.error(res.err_msgs?.join('、'))
+              }
+            }
+          }}
         />
       </section>
     );
@@ -376,6 +409,31 @@ class WarningPage extends React.Component {
       message.success(`${this.state.type === 'add' ? '添加成功' : '修改成功'}`);
       this.getAll();
     }
+  }
+
+  // 导出数据
+  exportData = async () => {
+    const res = await warningExport({
+      ignoreResCode: true,
+      proj_keyword: this.state.proj_keyword,
+      area_code: this.state.area_code,
+      point_keyword: this.state.point_keyword,
+      warn_type: this.state.warn_type,
+      confirm_res: this.state.confirm_res,
+      begin_timestamp: this.state.begin_timestamp,
+      end_timestamp: this.state.end_timestamp
+    })
+
+    const content = "\ufeff" + res;
+    const blob = new Blob([content], { type: 'text/csv, chartset=UTF-8' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.style.display = 'none';
+    a.download = '报警.csv';
+    a.click();
+    URL.revokeObjectURL(a.href)
   }
 };
 

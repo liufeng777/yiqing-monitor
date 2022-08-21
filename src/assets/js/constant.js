@@ -55,6 +55,13 @@ export const deviceType = {
   3: '机械式'
 }
 
+// 手自动类型
+export const detectType = {
+  0: '未知',
+  1: '手动',
+  2: '自动',
+}
+
 // 设备状态
 export const deviceState = {
   0: '未知',
@@ -129,13 +136,6 @@ export const confirmRes = {
   1: '未确认',
   2: '报警正确',
   3: '误报'
-}
-
-// 手自动类型
-export const detectType = {
-  0: '未知',
-  1: '手动',
-  2: '自动',
 }
 
 // 白蚁类型

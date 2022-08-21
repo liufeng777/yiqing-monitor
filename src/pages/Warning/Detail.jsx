@@ -59,7 +59,7 @@ export const WarningDetail = (props) => {
         })
         if (userRes) {
           const userArr = userRes.records;
-          if (props.detail.confirm_user_id && !userArr.find(v => v.id === props.detail.confirm_user_id)) {
+          if (props.detail?.confirm_user_id && !userArr.find(v => v.id === props.detail?.confirm_user_id)) {
             userArr.push({
               id: props.detail.confirm_user_id,
               name: props.detail.confirm_user_name
@@ -255,10 +255,10 @@ export const WarningDetail = (props) => {
             <Button type="primary" htmlType="submit">
               提交
             </Button>
-            <Button htmlType="button" onClick={throttle(1000, () => {
+            <Button htmlType="button" onClick={() => {
               setDetail(defaultDetail)
               props.onCancel();
-            })}
+            }}
             >
               取消
             </Button>

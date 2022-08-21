@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Pagination, Input, Tooltip, Modal, Button, message, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { warnType, detectType } from '../../assets/js/constant';
+import { warnType, deviceType } from '../../assets/js/constant';
 import { DetectDetail } from './Detail';
 import { getDateTime, DateAndTime } from '../Card/DateAndTime';
 import { SelectArea } from '../../component/SelectArea';
@@ -15,7 +15,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 // api
-import { detectList, detectBatchDelete, detectAdd, detectChange } from '../../api';
+import { detectList, detectBatchDelete, detectAdd, detectChange, detectImport, detectExport } from '../../api';
 
 const {Option} = Select;
 
@@ -38,11 +38,13 @@ class DetectPage extends React.Component {
       area_code: this.props.areaCode,
       area_point: this.props.areaPoint,
       warn_type: '',
-      detect_type: '',
+      device_type: '',
       begin_timestamp: '',
       end_timestamp: ''
     }
   };
+
+  fileInput
 
   componentDidMount () {
     this.getAll();
@@ -70,11 +72,11 @@ class DetectPage extends React.Component {
               <i className="iconfont icon-piliangshanchu1" />
               批量删除
             </Button>
-            <Button className="import-btn header-btn" type="primary">
+            <Button className="import-btn header-btn" type="primary" onClick={throttle(1000, () => this.fileInput.click())}>
               <i className="iconfont icon-daoru" />
               导入
             </Button>
-            <Button className="export-btn header-btn" type="primary">
+            <Button className="export-btn header-btn" type="primary" onClick={throttle(1000, this.exportData)}>
               <i className="iconfont icon-export" />
               导出
             </Button>
@@ -132,13 +134,13 @@ class DetectPage extends React.Component {
             </li>
             <li>
               <span className="label">手自动类型：</span>
-              <Select value={this.state.detect_type + ''} style={{width: 100}} onChange={(val) => {
-                this.setState({ detect_type: +val})
+              <Select value={this.state.device_type + ''} style={{width: 100}} onChange={(val) => {
+                this.setState({ device_type: +val})
               }}
               >
                 {
-                  Object.keys(detectType).map((key) => {
-                    return <Option value={key + ''} key={key}>{+key === 0 ? '全部' : detectType[key]}</Option>
+                  Object.keys(deviceType).map((key) => {
+                    return <Option value={key + ''} key={key}>{+key === 0 ? '全部' : deviceType[key]}</Option>
                   })
                 }
               </Select>
@@ -195,7 +197,7 @@ class DetectPage extends React.Component {
                     point_keyword: '',
                     area_code: 0,
                     warn_type: '',
-                    detect_type: '',
+                    device_type: '',
                     begin_timestamp: '',
                     end_timestamp: ''
                   }
@@ -299,6 +301,38 @@ class DetectPage extends React.Component {
           onSubmit={(values) => this.onSubmit(values)}
           detail={this.state.detail}
         />
+
+        {/* 导入csv */}
+        <input
+          type="file"
+          ref={r => this.fileInput = r}
+          style={{display: 'none'}}
+          id="upload-file"
+          accept={"text/csv"}
+          onClick={throttle(1000, (e) => {
+            e.target.value = ''
+          })}
+          onChange={async (e) => {
+            const file = e.target.files[0];
+
+            if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {
+              message.warning(`请上传CSV格式的文件`);
+              return;
+            }
+
+            // 导入数据
+            if (file) {
+              const res = await detectImport({
+                input_file: file
+              });
+              if (res && res.complete_count) {
+                this.getAll()
+              } else {
+                message.error(res.err_msgs?.join('、'))
+              }
+            }
+          }}
+        />
       </section>
     );
   }
@@ -312,7 +346,7 @@ class DetectPage extends React.Component {
       point_keyword: this.state.point_keyword,
       area_code: this.state.area_code,
       warn_type: this.state.warn_type,
-      detect_type: this.state.detect_type,
+      device_type: this.state.device_type,
       begin_timestamp: this.state.begin_timestamp,
       end_timestamp: this.state.end_timestamp
     });
@@ -355,6 +389,31 @@ class DetectPage extends React.Component {
       message.success(`${this.state.type === 'add' ? '添加成功' : '修改成功'}`);
       this.getAll();
     }
+  }
+
+  // 导出数据
+  exportData = async () => {
+    const res = await detectExport({
+      ignoreResCode: true,
+      proj_keyword: this.state.proj_keyword,
+      point_keyword: this.state.point_keyword,
+      area_code: this.state.area_code,
+      warn_type: this.state.warn_type,
+      device_type: this.state.device_type,
+      begin_timestamp: this.state.begin_timestamp,
+      end_timestamp: this.state.end_timestamp
+    })
+
+    const content = "\ufeff" + res;
+    const blob = new Blob([content], { type: 'text/csv, chartset=UTF-8' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.style.display = 'none';
+    a.download = '探测.csv';
+    a.click();
+    URL.revokeObjectURL(a.href)
   }
 };
 

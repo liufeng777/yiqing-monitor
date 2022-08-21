@@ -52,7 +52,7 @@ export const cardBatchDelete = (ids, data) => axios(`card/batch/[${ids}]`, data,
 export const cardGet = (id, data) => axios(`card/${id}`, data, 'GET')
 export const cardChange = (id, data) => axios(`card/${id}`, data, 'PUT')
 export const cardExport = (data) => axios('card/export', data)
-export const cardImport = (data) => axios('card/import', data)
+export const cardImport = (data) => axios('card/import', data, 'POST', 'multipart/form-data')
 
 /**
  * detect(探测记录)
@@ -63,7 +63,7 @@ export const detectBatchDelete = (ids, data) => axios(`detect/batch/[${ids}]`, d
 export const detectGet = (id, data) => axios(`detect/${id}`, data, 'GET')
 export const detectChange = (id, data) => axios(`detect/${id}`, data, 'PUT')
 export const detectExport = (data) => axios('detect/export', data)
-export const detectImport = (data) => axios('detect/import', data)
+export const detectImport = (data) => axios('detect/import', data, 'POST', 'multipart/form-data')
 
 /**
  * inspect(检查)
@@ -72,9 +72,9 @@ export const inspectAdd = data => axios('inspect', data, 'POST', 'multipart/form
 export const inspectList = data => axios('inspect/list', data)
 export const inspectBatchDelete = (ids, data) => axios(`inspect/batch/[${ids}]`, data, 'DELETE')
 export const inspectGet = (id, data) => axios(`inspect/${id}`, data, 'GET')
-export const inspectChange = (id, data) => axios(`inspect/${id}`, data, 'PUT')
+export const inspectChange = (id, data) => axios(`inspect/${id}`, data, 'PUT', 'multipart/form-data')
 export const inspectExport = (data) => axios('inspect/export', data)
-export const inspectImport = (data) => axios('inspect/import', data)
+export const inspectImport = (data) => axios('inspect/import', data, 'POST', 'multipart/form-data')
 
 
 /**
@@ -86,7 +86,7 @@ export const deviceBatchDelete = (ids, data) => axios(`device/batch/[${ids}]`, d
 export const deviceGet = (id, data) => axios(`device/${id}`, data, 'GET')
 export const deviceChange = (id, data) => axios(`device/${id}`, data, 'PUT')
 export const deviceExport = (data) => axios('device/export', data)
-export const deviceImport = (data) => axios('device/import', data)
+export const deviceImport = (data) => axios('device/import', data, 'POST', 'multipart/form-data')
 
 /**
  * point(布点)
@@ -121,7 +121,7 @@ export const projectUserBind = data => axios('project_user', data)
 export const projectUserUnbind = (projectId, userId, data) => axios(`project_user/${projectId}/${userId}`, data, 'DELETE')
 export const projectUserList = data => axios('project_user/list', data)
 export const projectUserExport = (data) => axios('project_user/export', data)
-export const projectUserImport = (data) => axios('project_user/import', data)
+export const projectUserImport = (data) => axios('project_user/import', data, 'POST', 'multipart/form-data')
 export const projectUserChange = (projectId, userId, data) => axios(`project_user/${projectId}/${userId}`, data, 'PUT')
 
 /**
@@ -133,5 +133,5 @@ export const warningBatchDelete = (ids, data) => axios(`warn/batch/[${ids}]`, da
 export const warningGet = (id, data) => axios(`warn/${id}`, data, 'GET')
 export const warningChange = (id, data) => axios(`warn/${id}`, data, 'PUT')
 export const warningExport = (data) => axios('warn/export', data)
-export const warningImport = (data) => axios('warn/import', data)
+export const warningImport = (data) => axios('warn/import', data, 'POST', 'multipart/form-data')
 export const warningListByPoint = (data) => axios('warn/list_by_point', data);

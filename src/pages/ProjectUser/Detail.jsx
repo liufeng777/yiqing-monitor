@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Select, Button, Modal, Divider } from 'antd';
 import { projectUserRole } from '../../assets/js/constant';
 import { userList } from '../../api';
-import { throttle } from 'throttle-debounce';
+import { throttle, debounce } from 'throttle-debounce';
 
 const { Option } = Select;
 
@@ -16,6 +16,7 @@ export const ProjectDetail = (props) => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [keywords, setKeywords] = useState('');
 
   const [form] = Form.useForm();
   const initialValues = {
@@ -29,19 +30,24 @@ export const ProjectDetail = (props) => {
     async function fetchData () {
       if (props.visible) {
         setDetail(props.detail || defaultDetail);
-        const res = await userList({
-          get_count: 10,
-          start_index: (currentPage - 1) * 10
-        })
-        if (res) {
-          setUsers(res.records);
-          setTotal(res.total_count);
-        }
+        getUsers('', 1)
       }
     }
     fetchData()
   }, [props.visible]);
 
+  const getUsers = async (keyword, page) => {
+    const res = await userList({
+      get_count: 10,
+      start_index: (page - 1) * 10,
+      keyword
+    })
+    if (res) {
+      setUsers(res.records);
+      setTotal(res.total_count);
+      setCurrentPage(page)
+    }
+  }
   return (
     <Modal
       width={400}
@@ -63,7 +69,20 @@ export const ProjectDetail = (props) => {
       initialValues={initialValues}
       >
         <Form.Item label="工程人员" name="user_id" rules={[{ required: true, message: '请选择工程人员' }]}>
-          <Select value={detail.user_id + ''} disabled={props.detail}
+          <Select
+            showSearch
+            filterOption={false}
+            onSearch={debounce(500, (val) => {
+              setKeywords(val)
+              getUsers(val, 1)
+            })}
+            onFocus={() => {
+              if (keywords) {
+                setKeywords('')
+                getUsers('', 1)
+              }
+            }}
+            value={detail.user_id + ''} disabled={props.detail}
             onChange={(val) => {
               setDetail({
                 ...detail,
@@ -78,29 +97,13 @@ export const ProjectDetail = (props) => {
                   <Button type="link" disabled={currentPage === 1}
                     onClick={throttle(1000, async () => {
                       const page = currentPage - 1;
-                      const res = await userList({
-                        get_count: 10,
-                        start_index: (page - 1) * 10
-                      })
-                      if (res) {
-                        setUsers(res.records);
-                        setTotal(res.total_count);
-                        setCurrentPage(page);
-                      }
+                      getUsers(keywords, page)
                     })}
                   >上一页</Button>
                   <Button type="link" disabled={currentPage * 10 >= total}
                     onClick={throttle(1000, async () => {
                       const page = currentPage + 1;
-                      const res = await userList({
-                        get_count: 10,
-                        start_index: (page - 1) * 10
-                      })
-                      if (res) {
-                        setUsers(res.records);
-                        setTotal(res.total_count);
-                        setCurrentPage(page);
-                      }
+                      getUsers(keywords, page)
                     })}
                   >下一页</Button>
                 </section>
