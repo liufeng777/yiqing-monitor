@@ -149,7 +149,7 @@ class ProjectPage extends React.Component {
           <Table
             size="small"
             dataSource={this.state.tableData}
-            rowKey={r => r.project_id}
+            rowKey={(r, index ) => index}
             pagination={false}
             // scroll={{x: 1800}}
             bordered

@@ -15,7 +15,7 @@ export const LatestWarn = (props) => {
         bordered
         height={200}
         dataSource={props.data}
-        rowKey={r => r.warn_id}
+        rowKey={(r, index ) => index}
         rowClassName={(r, i) => i % 2 ? 'even-line' : 'odd-line'}
         pagination={false}
         size="small"

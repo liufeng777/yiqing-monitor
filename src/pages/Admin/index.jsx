@@ -91,7 +91,7 @@ export default class AdminPage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.admin_id}
+            rowKey={(r, index ) => index}
             pagination={false}
           >
             <Table.Column title="管理员名" dataIndex="admin_name" key="admin_name" />

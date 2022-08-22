@@ -214,7 +214,7 @@ class DetectPage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.detect_id}
+            rowKey={(r, index ) => index}
             pagination={false}
             rowSelection={{
               onChange: (keys) => {

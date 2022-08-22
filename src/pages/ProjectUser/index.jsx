@@ -106,7 +106,7 @@ export default class ProjectUserPage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.project_id}
+            rowKey={(r, index ) => index}
             pagination={false}
           >
             <Table.Column title="用户" dataIndex="name" key="name" />

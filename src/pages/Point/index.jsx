@@ -219,7 +219,7 @@ class PointPage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.point_id}
+            rowKey={(r, index ) => index}
             pagination={false}
             // scroll={{x: 1500}}
             style={{minWidth: 1500}}

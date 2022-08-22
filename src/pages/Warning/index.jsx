@@ -214,7 +214,7 @@ class WarningPage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.warn_id}
+            rowKey={(r, index ) => index}
             pagination={false}
             rowSelection={{
               onChange: (keys) => {

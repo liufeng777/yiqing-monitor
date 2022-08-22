@@ -185,7 +185,7 @@ export default class DevicePage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.device_id}
+            rowKey={(r, index ) => index}
             pagination={false}
             rowSelection={{
               onChange: (keys) => {

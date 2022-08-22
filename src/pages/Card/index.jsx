@@ -206,7 +206,7 @@ export default class CardPage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.card_id}
+            rowKey={(r, index ) => index}
             pagination={false}
             rowSelection={{
               onChange: (keys) => {

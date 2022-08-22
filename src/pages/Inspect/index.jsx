@@ -223,7 +223,7 @@ class InspectPage extends React.Component {
             size="small"
             bordered
             dataSource={this.state.tableData}
-            rowKey={r => r.inspect_id}
+            rowKey={(r, index ) => index}
             pagination={false}
             rowSelection={{
               onChange: (keys) => {
