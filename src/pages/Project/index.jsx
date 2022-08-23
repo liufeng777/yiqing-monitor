@@ -168,7 +168,7 @@ class ProjectPage extends React.Component {
               (<img alt="" src={window.globalData.host + val} style={{width: 60, height: 60}} />) : <></>
               }
             />
-            <Table.Column title="描述" dataIndex="comment" key="comment" />
+            {/* <Table.Column title="描述" dataIndex="comment" key="comment" /> */}
             <Table.Column title="工程地址" dataIndex="address" key="address" />
             <Table.Column title="建筑面积" dataIndex="building_area" key="building_area" />
             <Table.Column title="幢数" dataIndex="building_number" key="building_number" />

@@ -48,7 +48,7 @@ export const ProjectDetail = (props) => {
 
   return (
     <Modal
-      width={560}
+      width={580}
       title={props.detail ? '编辑信息' : '添加工程'}
       footer={null}
       visible={props.visible}
