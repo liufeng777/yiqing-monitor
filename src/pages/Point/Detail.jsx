@@ -88,7 +88,7 @@ export const PointDetail = (props) => {
         </Form.Item>
         {(props.detail || props.project_id) ?
         <Form.Item label="所属工程" name="project_name">
-          <Input value={props.detail.project_name} disabled />
+          <Input value={props.detail?.project_name} disabled />
         </Form.Item> :
         <Form.Item label="所属工程" name="project_id"
           rules={[{ required: true, message: '请选择所属工程' }]}

@@ -40,45 +40,45 @@ export default class PointMap extends React.Component {
         </header>
         <section className='card-container'>
           <Tabs type="card" defaultActiveKey="map">
-            <TabPane tab="布点列表" key="list">
-              <PointPage hideTags={true} projId={this.props.match.params.proId} projName={this.state.project?.name} />
+              <TabPane tab="布点分布" key="map">
+                <section className='point-map-body'>
+                  <section id="point-map-container">
+                  </section>
+                {
+                this.state.activePoint &&
+                  <section className='point-item-desc'>
+                    <i className='iconfont icon-guanbi1' onClick={() => {
+                      this.setState({
+                        activePoint: null
+                      })
+                    }}/>
+                    <Descriptions title={`布点详情（${this.state.activePoint.name}）`} bordered size="small">
+                      <Descriptions.Item label="探测时间">{
+                        this.state.activePoint.detect_timestamp ?
+                          getDateTime(this.state.activePoint.detect_timestamp).join(' ') : '未知'
+                      }</Descriptions.Item>
+                      <Descriptions.Item label="检查时间">{
+                        this.state.activePoint.inspect_timestamp ?
+                        getDateTime(this.state.activePoint.inspect_timestamp).join(' ') : '未知'
+                      }</Descriptions.Item>
+                      <Descriptions.Item label="检查结果">{
+                        inspectResult[this.state.activePoint.inspect_state]
+                      }</Descriptions.Item>
+                      <Descriptions.Item label="措施">{
+                        measureType[this.state.activePoint.inspect_measure]
+                      }</Descriptions.Item>
+                      <Descriptions.Item label="报警类型">{
+                        this.state.activePoint.warn_type ?
+                        warnType[this.state.activePoint.warn_type] : '未知'
+                      }</Descriptions.Item>
+                    </Descriptions>
+                  </section>
+                }
+              </section>
             </TabPane>
-            <TabPane tab="布点分布" key="map">
-              <section className='point-map-body'>
-                <section id="point-map-container">
-                </section>
-              {
-              this.state.activePoint &&
-                <section className='point-item-desc'>
-                  <i className='iconfont icon-guanbi1' onClick={() => {
-                    this.setState({
-                      activePoint: null
-                    })
-                  }}/>
-                  <Descriptions title={`布点详情（${this.state.activePoint.name}）`} bordered size="small">
-                    <Descriptions.Item label="探测时间">{
-                      this.state.activePoint.detect_timestamp ?
-                        getDateTime(this.state.activePoint.detect_timestamp).join(' ') : '未知'
-                    }</Descriptions.Item>
-                    <Descriptions.Item label="检查时间">{
-                      this.state.activePoint.inspect_timestamp ?
-                      getDateTime(this.state.activePoint.inspect_timestamp).join(' ') : '未知'
-                    }</Descriptions.Item>
-                    <Descriptions.Item label="检查结果">{
-                      inspectResult[this.state.activePoint.inspect_state]
-                    }</Descriptions.Item>
-                    <Descriptions.Item label="措施">{
-                      measureType[this.state.activePoint.inspect_measure]
-                    }</Descriptions.Item>
-                    <Descriptions.Item label="报警类型">{
-                      this.state.activePoint.warn_type ?
-                      warnType[this.state.activePoint.warn_type] : '未知'
-                    }</Descriptions.Item>
-                  </Descriptions>
-                </section>
-              }
-            </section>
-          </TabPane>
+            <TabPane tab="布点列表" key="list">
+              <PointPage hideTags={true} projId={this.props.match.params.proId} projName={this.state.project?.name || ''} />
+            </TabPane>
           </Tabs>
         </section>
       </section>

@@ -52,7 +52,9 @@ export const WarnInspect = (props) => {
         setTableData(res.records)
       }
     }
-    fetchData();
+    if (props.warn?.warn_id) {
+      fetchData();
+    }
   }, [props.warn?.warn_id])
 
   return (
