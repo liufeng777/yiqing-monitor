@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Button } from 'antd';
+import { Tooltip, Button, Input, Radio, Space } from 'antd';
 import { SelectArea } from '../../component/SelectArea';
 import { overviewStatistic, projectMap, overviewTopProjWarn, pointListInMap } from '../../api';
 import { warningType, barOption, lineOption } from '../../assets/js/constant';
@@ -225,6 +225,17 @@ class HomePage extends React.Component {
 
             <section className="project-map-box">
               <section id="project-map-container" />
+              <section className='map-type'>
+                <Radio.Group onChange={(e) => {
+                  this.props.setMapDefaultType(e.target.value);
+                  this.renderMap(this.state.zoom, this.state.projects, e.target.value)
+                }} value={this.props.mapDefaultType}>
+                  <Space direction="vertical">
+                    <Radio value={0}>标准地图</Radio>
+                    <Radio value={1}>卫星图</Radio>
+                  </Space>
+                </Radio.Group>
+              </section>
 
             {/* 工程详情 */}
             {
@@ -466,7 +477,7 @@ class HomePage extends React.Component {
         projects: res.records
       });
     }
-    this.renderMap(this.state.zoom, this.state.projects)
+    this.renderMap(this.state.zoom, this.state.projects, this.props.mapDefaultType)
   }
 
   // 获取地图层级
@@ -492,7 +503,7 @@ class HomePage extends React.Component {
         zoom: 14
       })
     }
-    this.renderMap(zoom, this.state.projects)
+    this.renderMap(zoom, this.state.projects, this.props.mapDefaultType)
   }
 
   // 获取蚁情最多的工程和最新蚁情报警
@@ -508,7 +519,7 @@ class HomePage extends React.Component {
     }
   }
 
-  renderMap = (zoom, projects) => {
+  renderMap = (zoom, projects, mapType) => {
     // 地图初始化应该在地图容器div已经添加到DOM树之后
     const center = [this.props.areaPoint?.lng || 108.55, this.props.areaPoint?.lat || 34.32]
     const map = new window.AMap.Map('project-map-container', {
@@ -517,10 +528,10 @@ class HomePage extends React.Component {
       mapStyle: 'amap://styles/darkblue',
     })
 
-    map.plugin(["AMap.MapType"],function() {
+    map.plugin(["AMap.MapType"], () => {
       //地图类型切换
       const type= new window.AMap.MapType({
-        defaultType: 0
+        defaultType: mapType
       });
       map.addControl(type);
   });
@@ -600,7 +611,8 @@ class HomePage extends React.Component {
 const mapStateToProps = (state) => {
   return {
     areaCode: state.areaCode,
-    areaPoint: state.areaPoint
+    areaPoint: state.areaPoint,
+    mapDefaultType: state.mapDefaultType
   };
 };
 

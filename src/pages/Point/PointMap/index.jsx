@@ -1,15 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Descriptions, Tabs } from 'antd';
+import { Descriptions, Tabs, Radio, Space } from 'antd';
 import { pointListInMap, projectGet, pointGet } from '../../../api';
 import { getDateTime } from '../../Card/DateAndTime';
 import { inspectResult, measureType, warnType } from '../../../assets/js/constant';
 import PointPage from '../index';
 import './index.less';
 
+// redux
+import * as actions from '../../../store/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 const { TabPane } = Tabs;
 
-export default class PointMap extends React.Component {
+class PointMap extends React.Component {
   constructor(props) {
     super(props);
     this.state={
@@ -42,7 +47,17 @@ export default class PointMap extends React.Component {
           <Tabs type="card" defaultActiveKey="map">
               <TabPane tab="布点分布" key="map">
                 <section className='point-map-body'>
-                  <section id="point-map-container">
+                  <section id="point-map-container" />
+                  <section className='map-type'>
+                    <Radio.Group onChange={(e) => {
+                      this.props.setMapDefaultType(e.target.value);
+                      this.renderMap(this.state.points, this.state.project, e.target.value)
+                    }} value={this.props.mapDefaultType}>
+                      <Space direction="vertical">
+                        <Radio value={0}>标准地图</Radio>
+                        <Radio value={1}>卫星图</Radio>
+                      </Space>
+                    </Radio.Group>
                   </section>
                 {
                 this.state.activePoint &&
@@ -85,18 +100,19 @@ export default class PointMap extends React.Component {
     )
   }
 
-  renderMap = (points, project) => {
+  renderMap = (points, project, mapType) => {
     const centerPoint = project ? [project.longitude / 1000000, project.latitude / 1000000
     ] : [108.55, 34.32]
     const map = new window.AMap.Map('point-map-container', {
       zoom: 18,
       center: centerPoint,
+      mapStyle: 'amap://styles/darkblue',
     });
 
-    map.plugin(["AMap.MapType"],function() {
+    map.plugin(["AMap.MapType"], () => {
       //地图类型切换
       const type= new window.AMap.MapType({
-        defaultType: 0
+        defaultType: mapType
       });
       map.addControl(type);
   });
@@ -142,7 +158,7 @@ export default class PointMap extends React.Component {
       this.setState({
         points: res.records
       })
-      this.renderMap(res.records, this.state.project)
+      this.renderMap(res.records, this.state.project, this.props.mapDefaultType)
     }
   }
 
@@ -155,7 +171,7 @@ export default class PointMap extends React.Component {
       this.setState({
         project: res.record
       })
-      this.renderMap(this.state.points, res.record)
+      this.renderMap(this.state.points, res.record, )
     }
   }
 
@@ -171,5 +187,22 @@ export default class PointMap extends React.Component {
     }
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    areaCode: state.areaCode,
+    areaPoint: state.areaPoint,
+    mapDefaultType: state.mapDefaultType
+  };
+};
+
+const mapDispathToProps = (dispath) => {
+  return {
+    ...bindActionCreators(actions, dispath),
+  };
+};
+
+export default connect(mapStateToProps, mapDispathToProps)(PointMap);
+
 
 

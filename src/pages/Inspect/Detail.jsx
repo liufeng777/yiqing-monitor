@@ -390,49 +390,45 @@ export const InspectDetail = (props) => {
             }
           </Select>
         </Form.Item>
-        {
-          props.detail && <>
-          <Form.Item label="检测完成时间" name="done_timestamp">
-            <DateAndTime value={detail.done_timestamp} onChange={(val) => {
-              setDetail({
-                ...detail,
-                done_timestamp: val
+        <Form.Item label="检测完成时间" name="done_timestamp">
+          <DateAndTime value={detail.done_timestamp} onChange={(val) => {
+            setDetail({
+              ...detail,
+              done_timestamp: val
+            })
+          }}
+          />
+        </Form.Item>
+        <Form.Item label="检查结果状态" name="state">
+          <Select value={detail.state + ''} onChange={(val) => {
+            setDetail({
+              ...detail,
+              state: +val
+            })
+          }}
+          >
+            {
+              Object.keys(inspectResult).map((key) => {
+                return <Option value={key + ''} key={key}>{inspectResult[key]}</Option>
               })
-            }}
-            />
-          </Form.Item>
-          <Form.Item label="检查结果状态" name="state">
-            <Select value={detail.state + ''} onChange={(val) => {
-              setDetail({
-                ...detail,
-                state: +val
+            }
+          </Select>
+        </Form.Item>
+        <Form.Item label="措施类型" name="measure_type">
+          <Select value={detail.measure_type + ''} onChange={(val) => {
+            setDetail({
+              ...detail,
+              measure_type: +val
+            })
+          }}
+          >
+            {
+              Object.keys(measureType).map((key) => {
+                return <Option value={key + ''} key={key}>{measureType[key]}</Option>
               })
-            }}
-            >
-              {
-                Object.keys(inspectResult).map((key) => {
-                  return <Option value={key + ''} key={key}>{inspectResult[key]}</Option>
-                })
-              }
-            </Select>
-          </Form.Item>
-          <Form.Item label="措施类型" name="measure_type">
-            <Select value={detail.measure_type + ''} onChange={(val) => {
-              setDetail({
-                ...detail,
-                measure_type: +val
-              })
-            }}
-            >
-              {
-                Object.keys(measureType).map((key) => {
-                  return <Option value={key + ''} key={key}>{measureType[key]}</Option>
-                })
-              }
-            </Select>
-          </Form.Item>
-          </>
-        }
+            }
+          </Select>
+        </Form.Item>
         <Form.Item label="图片" name="image_file">
           <div className="upload-image">
             {

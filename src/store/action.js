@@ -39,3 +39,12 @@ export const switchTag = (val) => {
     payload: val,
   };
 }
+
+// 设置地图的模式
+export const setMapDefaultType = (val) => {
+  return {
+    type: types.MAP_DEFAULT_TYPE,
+    payload: val
+
+  }
+}

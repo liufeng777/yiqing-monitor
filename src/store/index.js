@@ -6,7 +6,8 @@ const initialState = {
   areaCode: +sessionStorage.getItem('areaCode') || 0,
   areaPoint: JSON.parse(sessionStorage.getItem('areaPoint') || '{"lng":108.55,"lat":34.32}'),
   cacheTags: [],
-  activeTag: ''
+  activeTag: '',
+  mapDefaultType: 0
 };
 
 const reducer = (state = initialState, action) => {
@@ -35,6 +36,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         activeTag: action.payload
+      }
+    case types.MAP_DEFAULT_TYPE:
+      return {
+        ...state,
+        mapDefaultType: action.payload
       }
     default:
       return state;
